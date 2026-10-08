@@ -195,16 +195,23 @@ document.addEventListener("DOMContentLoaded", () => {
     // El código solo se ejecuta si el script de Supabase se cargó correctamente
     if (typeof window.supabase !== 'undefined') {
         
-        const supabaseUrl = 'https://yhggkrhppvimfikiylbp.supabase.co/rest/v1/'; // <-- PON TU URL AQUÍ
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloZ2drcmhwcHZpbWZpa2l5bGJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0ODAwNjcsImV4cCI6MjEwNzA1NjA2N30.fmj-5oeYlFNcg7hKeGpDzjAOpmV4AP6p7GiH0OirZls'; // <-- PON TU KEY AQUÍ
+        // ¡REEMPLAZA ESTO! PON TUS DATOS ADENTRO DE LAS COMILLAS DOBLES
+        const supabaseUrl = "https://yhggkrhppvimfikiylbp.supabase.co/rest/v1/"; 
+        const supabaseKey = "sb_publishable_705SiIydShE9qdE1mVZIRg_Hb4g9bIA"; 
         
+        // 🚨 PRUEBA DEFINITIVA: DETECTOR DE LLAVES
+        if (!supabaseKey || supabaseKey.includes("TU_") || supabaseKey === "") {
+            alert("🚨 ALERTA: La variable supabaseKey está vacía, mal escrita, o tiene el texto de relleno.");
+        } else {
+            console.log("✅ Supabase configurado. Llave detectada. Primeros caracteres:", supabaseKey.substring(0, 15));
+        }
+
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         const loginBtnDesktop = document.getElementById('btn-login-x-desktop');
         const loginBtnMobile = document.getElementById('btn-login-x-mobile');
 
         async function signInWithTwitter() {
-            // Mostrar estado de carga para que el usuario sepa que está funcionando
             if (loginBtnDesktop) loginBtnDesktop.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
             if (loginBtnMobile) loginBtnMobile.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
             
@@ -213,7 +220,8 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             if (error) {
                 console.error("Error al iniciar sesión:", error.message);
-                alert("Hubo un error al conectar con X. Verifica la consola.");
+                alert("Hubo un error al conectar con X. Revisa la consola.");
+                updateLoginUI(null); // Restaurar botón
             }
         }
 
@@ -240,7 +248,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         async function checkUserSession() {
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session }, error } = await supabase.auth.getSession();
+            if (error) {
+                console.error("Error validando sesión:", error);
+            }
             updateLoginUI(session);
 
             supabase.auth.onAuthStateChange((_event, session) => {
