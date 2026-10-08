@@ -193,3 +193,70 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+
+// =========================================================
+    // 6. BACKEND: INTEGRACIÓN CON SUPABASE & LOGIN DE X
+    // =========================================================
+    
+    // REEMPLAZA ESTAS DOS LÍNEAS CON TUS DATOS DE SUPABASE
+    const supabaseUrl = 'https://yhggkrhppvimfikiylbp.supabase.co/rest/v1/';
+    const supabaseKey = 'sb_publishable_705SiIydShE9qdE1mVZIRg_Hb4g9bIA';
+    
+    // Inicializamos Supabase
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    const loginBtnDesktop = document.getElementById('btn-login-x-desktop');
+    const loginBtnMobile = document.getElementById('btn-login-x-mobile');
+
+    // Función para Iniciar Sesión
+    async function signInWithTwitter() {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'twitter',
+        });
+        if (error) console.error("Error al iniciar sesión:", error.message);
+    }
+
+    // Función para actualizar la Interfaz (UI)
+    function updateLoginUI(session) {
+        if (session) {
+            // El usuario está logueado: Mostramos su @usuario de X
+            const username = session.user.user_metadata.user_name || session.user.user_metadata.preferred_username || 'Tribe Member';
+            
+            const loggedInHTML = `<i class="fa-brands fa-x-twitter"></i> @${username}`;
+            
+            if (loginBtnDesktop) {
+                loginBtnDesktop.innerHTML = loggedInHTML;
+                loginBtnDesktop.classList.add('bg-brandGold', 'text-black');
+                loginBtnDesktop.classList.remove('bg-black', 'text-white', 'dark:bg-white', 'dark:text-black');
+            }
+            if (loginBtnMobile) {
+                loginBtnMobile.innerHTML = loggedInHTML;
+                loginBtnMobile.classList.add('bg-brandGold', 'text-black');
+                loginBtnMobile.classList.remove('bg-black', 'text-white', 'dark:bg-white', 'dark:text-black');
+            }
+        } else {
+            // No logueado: Mostramos "Connect X"
+            const loggedOutHTML = `<i class="fa-brands fa-x-twitter"></i> Connect X`;
+            if (loginBtnDesktop) loginBtnDesktop.innerHTML = loggedOutHTML;
+            if (loginBtnMobile) loginBtnMobile.innerHTML = loggedOutHTML;
+        }
+    }
+
+    // Verificar si el usuario ya inició sesión previamente al cargar la página
+    async function checkUserSession() {
+        // Chequeo inicial
+        const { data: { session } } = await supabase.auth.getSession();
+        updateLoginUI(session);
+
+        // Escuchar si la sesión cambia (por ejemplo, cuando regresa de autorizar en X)
+        supabase.auth.onAuthStateChange((_event, session) => {
+            updateLoginUI(session);
+        });
+    }
+
+    // Asignar los clics a los botones
+    if (loginBtnDesktop) loginBtnDesktop.addEventListener('click', signInWithTwitter);
+    if (loginBtnMobile) loginBtnMobile.addEventListener('click', signInWithTwitter);
+
+    // Arrancar la verificación
+    checkUserSession();

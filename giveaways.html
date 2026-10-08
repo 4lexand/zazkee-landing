@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SDK de Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <!-- Tailwind Config con Dark Mode -->
     <script>
@@ -50,9 +52,10 @@
                 <a href="index.html#partnerships" class="nav-link text-gray-600 dark:text-gray-400 hover:text-brandGold dark:hover:text-brandGold transition-colors">Partnerships</a>
                 <a href="index.html#services" class="nav-link text-gray-600 dark:text-gray-400 hover:text-brandGold dark:hover:text-brandGold transition-colors">What I Do</a>
                 <a href="#" class="text-brandGold font-bold drop-shadow-[0_0_8px_rgba(234,179,8,0.5)] transition-colors">Active Drops</a>
-                <a href="index.html#contact" class="nav-link px-6 py-2.5 border border-gray-300 dark:border-brandGold/30 text-gray-900 dark:text-white hover:border-brandGold dark:hover:border-brandGold rounded-full transition-all font-semibold shadow-sm">
-                    Collab With Me
-                </a>
+                <!-- Botón Connect X (Desktop) -->
+                <button id="btn-login-x-desktop" class="px-6 py-2.5 bg-black dark:bg-white text-white dark:text-black hover:bg-brandGold dark:hover:bg-brandGold hover:text-black rounded-full transition-all font-bold shadow-[0_0_15px_rgba(255,255,255,0.1)] flex items-center gap-2">
+                    <i class="fa-brands fa-x-twitter"></i> Connect X
+                </button>
                 <button id="theme-toggle" class="text-gray-500 dark:text-gray-400 hover:text-brandGold dark:hover:text-brandGold transition-colors text-xl ml-4 focus:outline-none">
                     <i class="fa-solid fa-moon" id="theme-icon"></i>
                 </button>
@@ -104,10 +107,10 @@
                 </a>
             </div>
 
-            <!-- Botón Collab -->
-            <a href="index.html#contact" class="nav-link mobile-link mt-5 w-full py-3.5 bg-brandGold text-black font-bold text-center text-sm rounded-xl tracking-wider uppercase shadow-[0_0_20px_rgba(234,179,8,0.3)] flex items-center justify-center gap-2">
-                <i class="fa-solid fa-comments"></i> Collab With Me
-            </a>
+            <!-- Botón Connect X (Mobile) -->
+            <button id="btn-login-x-mobile" class="mt-5 w-full py-3.5 bg-black dark:bg-white text-white dark:text-black font-bold text-center text-sm rounded-xl tracking-wider uppercase shadow-[0_0_20px_rgba(255,255,255,0.1)] flex items-center justify-center gap-2 transition-colors">
+                <i class="fa-brands fa-x-twitter text-lg"></i> Connect X
+            </button>
 
             <!-- Redes en Móvil al Pie del Menú -->
             <div class="mt-6 pt-5 border-t border-gray-200 dark:border-white/10 flex items-center justify-center gap-6">
