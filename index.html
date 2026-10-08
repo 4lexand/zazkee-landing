@@ -1,262 +1,169 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZAZKEE | Official KOL Manager & Web3 Creator</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Space Grotesk -->
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Tailwind Config -->
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Space Grotesk', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'], },
                     colors: {
                         dark: '#0a0a0c',
                         darker: '#050505',
                         brandGold: '#EAB308',
                         brandDarkGold: '#ca8a04',
-                    },
-                    animation: {
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                        'zoom-slow': 'zoom 15s ease-out infinite alternate',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-12px)' },
-                        },
-                        zoom: {
-                            '0%': { transform: 'scale(1.2)' },
-                            '100%': { transform: 'scale(1.5)' },
-                        }
                     }
                 }
             }
         }
     </script>
-
-    <!-- Custom Styles -->
-    <style>
-        body {
-            background-color: #050505;
-            color: #e2e8f0;
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(234, 179, 8, 0.03), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.02), transparent 25%);
-        }
-
-        .no-scroll { overflow: hidden !important; }
-
-        /* --- High-End Preloader Styles --- */
-        #preloader {
-            position: fixed;
-            inset: 0;
-            z-index: 99999;
-            background-color: #030303;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        .text-outline {
-            color: transparent;
-            -webkit-text-stroke: 1px rgba(234, 179, 8, 0.2);
-        }
-
-        #loading-text-fill {
-            width: 0%;
-            white-space: nowrap;
-            overflow: hidden;
-            color: #EAB308;
-            text-shadow: 0 0 40px rgba(234, 179, 8, 0.6);
-            border-right: 2px solid rgba(234, 179, 8, 0.8);
-            box-shadow: inset -5px 0 10px -5px rgba(234, 179, 8, 0.5);
-        }
-        
-        /* --- General Components --- */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .glass-card:hover {
-            border-color: rgba(234, 179, 8, 0.4);
-            box-shadow: 0 10px 30px -10px rgba(234, 179, 8, 0.15);
-            transform: translateY(-5px);
-        }
-        
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .delay-100 { transition-delay: 100ms; }
-        .delay-200 { transition-delay: 200ms; }
-        .delay-300 { transition-delay: 300ms; }
-        .delay-400 { transition-delay: 400ms; }
-
-        .hero-element {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        /* Mobile Menu Transitions */
-        #mobile-menu {
-            transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
-        }
-        #mobile-menu.open {
-            max-height: 400px;
-            opacity: 1;
-        }
-
-        #enter-btn {
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(20px);
-        }
-    </style>
+    <link rel="stylesheet" href="global.css">
 </head>
-<body class="antialiased selection:bg-brandGold selection:text-black no-scroll">
-
-    <!-- Audio Element (Eagle or Coin sound) -->
-    <!-- Asegúrate de tener el archivo sound.mp3 en tu carpeta -->
+<body class="antialiased selection:bg-brandGold selection:text-black bg-gray-50 dark:bg-[#050505] transition-colors duration-500">
+    
     <audio id="introSound" src="sound.mp3" preload="auto"></audio>
 
-    <!-- PRELOADER -->
-    <div id="preloader">
-        <div class="absolute inset-0 z-0 overflow-hidden">
-            <img src="EpN_gAkS_400x400.png" class="w-full h-full object-cover blur-[80px] opacity-40 animate-zoom-slow" alt="Loading Background">
-            <div class="absolute inset-0 bg-[#050505]/80"></div>
-            <div class="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
-        </div>
-        
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <video id="bg-video" class="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover opacity-90 transition-opacity duration-1000" autoplay loop muted playsinline>
+            <source src="videoNo.mp4" type="video/mp4">
+        </video>
+        <div id="video-overlay" class="absolute inset-0 bg-black/50 dark:bg-black/60 transition-colors duration-500"></div>
+    </div>
+
+    <div id="preloader" class="bg-[#030303] z-[99999] fixed inset-0 flex flex-col justify-center items-center">
         <div class="loader-content flex flex-col items-center justify-center text-center relative z-10 w-full px-4">
             <p class="text-brandGold/70 font-mono text-xs md:text-sm uppercase tracking-[0.4em] mb-4 md:mb-6 h-4" id="loader-status">CONNECTING WALLET...</p>
-            
             <div class="relative text-5xl md:text-7xl lg:text-9xl font-extrabold tracking-widest font-sans mb-8">
-                <span class="text-outline block">ZAZKEE</span>
-                <span id="loading-text-fill" class="absolute left-0 top-0 block">ZAZKEE</span>
+                <span class="text-outline block text-transparent" style="-webkit-text-stroke: 1px rgba(234, 179, 8, 0.2);">ZAZKEE</span>
+                <span id="loading-text-fill" class="absolute left-0 top-0 block text-brandGold overflow-hidden whitespace-nowrap" style="width: 0%; border-right: 2px solid rgba(234, 179, 8, 0.8);">ZAZKEE</span>
             </div>
-
-            <div class="flex items-center justify-center h-12">
-                <span id="loader-counter" class="text-white font-mono text-lg md:text-2xl w-24 text-center font-bold tracking-wider">0%</span>
-                
-                <!-- Enter Button (Appears at 100%) -->
-                <button id="enter-btn" class="absolute px-8 py-3 bg-brandGold text-black font-bold tracking-widest uppercase rounded-full shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:scale-105 hover:bg-brandDarkGold transition-all">
+            <div class="relative flex items-center justify-center h-16 w-full mt-4">
+                <span id="loader-counter" class="text-white font-mono text-lg md:text-2xl w-24 text-center font-bold tracking-wider">0</span>
+                <button id="enter-btn" class="absolute px-8 py-3 bg-brandGold text-black font-bold tracking-widest uppercase rounded-full shadow-[0_0_15px_rgba(234,179,8,0.4)] opacity-0 pointer-events-none transition-all duration-500 z-20">
                     Enter
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Interactive Particle Network Canvas -->
-    <canvas id="networkCanvas" class="fixed inset-0 pointer-events-auto z-0"></canvas>
-
-    <!-- Navigation (Responsive) -->
-    <nav id="navbar" class="fixed w-full z-50 top-0 transition-all duration-300 backdrop-blur-lg bg-darker/90 border-b border-white/5 py-2">
-        <div class="max-w-[1400px] mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="nav-link text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-widest text-white z-50 relative">ZAZK<span class="text-brandGold">EE</span></a>
+ <nav id="navbar" class="fixed w-full z-50 top-0 transition-all duration-300 backdrop-blur-xl bg-white/80 dark:bg-darker/90 border-b border-gray-200 dark:border-white/10 py-1">
+        <div class="max-w-[1400px] mx-auto px-5 py-3 flex justify-between items-center">
+            <a href="#" class="nav-link text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-widest text-gray-900 dark:text-white z-50 relative transition-colors">
+                ZAZK<span class="text-brandGold">EE</span>
+            </a>
             
-            <!-- Desktop Menu -->
-            <div class="hidden md:flex items-center space-x-8 lg:space-x-12 text-sm lg:text-base font-medium text-gray-400">
-                <a href="#about" class="nav-link hover:text-white hover:text-brandGold transition-colors">About</a>
-                <a href="#partnerships" class="nav-link hover:text-white hover:text-brandGold transition-colors">Partnerships</a>
-                <a href="#services" class="nav-link hover:text-white hover:text-brandGold transition-colors">What I Do</a>
-                <a href="#proof" class="nav-link hover:text-white hover:text-brandGold transition-colors">Proof</a>
-                <a href="#contact" class="nav-link px-6 py-2.5 border border-brandGold/30 hover:border-brandGold hover:bg-brandGold/10 text-white rounded-full transition-all font-semibold shadow-[0_0_15px_rgba(234,179,8,0.1)]">
+            <div class="hidden md:flex items-center space-x-8 lg:space-x-12 text-sm lg:text-base font-medium">
+                <a href="#about" class="nav-link text-gray-600 dark:text-gray-400 hover:text-brandGold dark:hover:text-brandGold transition-colors">About</a>
+                <a href="#partnerships" class="nav-link text-gray-600 dark:text-gray-400 hover:text-brandGold dark:hover:text-brandGold transition-colors">Partnerships</a>
+                <a href="#services" class="nav-link text-gray-600 dark:text-gray-400 hover:text-brandGold dark:hover:text-brandGold transition-colors">What I Do</a>
+                <a href="giveaways.html" class="text-brandGold font-bold drop-shadow-[0_0_8px_rgba(234,179,8,0.5)] transition-colors">Active Drops</a>
+                <a href="#contact" class="nav-link px-6 py-2.5 border border-gray-300 dark:border-brandGold/30 text-gray-900 dark:text-white hover:border-brandGold dark:hover:border-brandGold rounded-full transition-all font-semibold shadow-sm">
                     Collab With Me
+                </a>
+                <button id="theme-toggle" class="text-gray-500 dark:text-gray-400 hover:text-brandGold dark:hover:text-brandGold transition-colors text-xl ml-4 focus:outline-none">
+                    <i class="fa-solid fa-moon" id="theme-icon"></i>
+                </button>
+            </div>
+
+            <div class="md:hidden flex items-center gap-2.5 z-50 relative">
+                <a href="giveaways.html" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brandGold/15 border border-brandGold/40 text-brandGold text-xs font-bold uppercase tracking-wider shadow-[0_0_12px_rgba(234,179,8,0.25)]">
+                    <span class="w-2 h-2 rounded-full bg-brandGold animate-pulse"></span>
+                    Drops
+                </a>
+
+                <button id="theme-toggle-mobile" class="w-9 h-9 rounded-full bg-gray-200/60 dark:bg-white/5 border border-gray-300 dark:border-white/10 flex items-center justify-center text-gray-800 dark:text-gray-200 text-sm focus:outline-none">
+                    <i class="fa-solid fa-moon" id="theme-icon-mobile"></i>
+                </button>
+
+                <button id="mobile-menu-button" class="w-9 h-9 rounded-full bg-gray-200/60 dark:bg-white/5 border border-gray-300 dark:border-white/10 flex items-center justify-center text-gray-900 dark:text-white text-base focus:outline-none">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="md:hidden bg-white/95 dark:bg-[#070709]/95 backdrop-blur-2xl border-b border-gray-200 dark:border-white/10 absolute w-full left-0 top-full px-6 py-6 transition-all duration-300">
+            <div class="flex flex-col space-y-2">
+                <a href="#about" class="nav-link mobile-link flex items-center justify-between p-3.5 rounded-xl bg-gray-100/70 dark:bg-white/[0.03] border border-gray-200/80 dark:border-white/5 text-gray-800 dark:text-gray-200 font-semibold text-sm hover:border-brandGold/40 transition-all">
+                    <span class="flex items-center gap-3">
+                        <i class="fa-solid fa-fingerprint text-brandGold w-4 text-center"></i> About ZAZKEE
+                    </span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                </a>
+
+                <a href="#partnerships" class="nav-link mobile-link flex items-center justify-between p-3.5 rounded-xl bg-gray-100/70 dark:bg-white/[0.03] border border-gray-200/80 dark:border-white/5 text-gray-800 dark:text-gray-200 font-semibold text-sm hover:border-brandGold/40 transition-all">
+                    <span class="flex items-center gap-3">
+                        <i class="fa-solid fa-handshake-simple text-brandGold w-4 text-center"></i> Partnerships
+                    </span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                </a>
+
+                <a href="#services" class="nav-link mobile-link flex items-center justify-between p-3.5 rounded-xl bg-gray-100/70 dark:bg-white/[0.03] border border-gray-200/80 dark:border-white/5 text-gray-800 dark:text-gray-200 font-semibold text-sm hover:border-brandGold/40 transition-all">
+                    <span class="flex items-center gap-3">
+                        <i class="fa-solid fa-bolt text-brandGold w-4 text-center"></i> What I Do
+                    </span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                </a>
+
+                <a href="giveaways.html" class="mobile-link flex items-center justify-between p-3.5 rounded-xl bg-brandGold/10 border border-brandGold/30 text-brandGold font-bold text-sm shadow-[0_0_15px_rgba(234,179,8,0.15)] transition-all">
+                    <span class="flex items-center gap-3">
+                        <i class="fa-solid fa-gift text-brandGold w-4 text-center"></i> Active Drops
+                    </span>
+                    <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-brandGold text-black font-extrabold">Live</span>
                 </a>
             </div>
 
-            <!-- Mobile Menu Toggle -->
-            <button id="mobile-menu-button" class="md:hidden text-white text-2xl z-50 relative focus:outline-none">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-        </div>
+            <a href="#contact" class="nav-link mobile-link mt-5 w-full py-3.5 bg-brandGold text-black font-bold text-center text-sm rounded-xl tracking-wider uppercase shadow-[0_0_20px_rgba(234,179,8,0.3)] flex items-center justify-center gap-2">
+                <i class="fa-solid fa-comments"></i> Collab With Me
+            </a>
 
-        <!-- Mobile Dropdown -->
-        <div id="mobile-menu" class="md:hidden bg-darker/95 backdrop-blur-xl border-b border-white/10 absolute w-full left-0 top-full flex flex-col items-center py-6 space-y-6 text-gray-300 font-medium">
-            <a href="#about" class="nav-link mobile-link hover:text-brandGold transition-colors text-lg">About</a>
-            <a href="#partnerships" class="nav-link mobile-link hover:text-brandGold transition-colors text-lg">Partnerships</a>
-            <a href="#services" class="nav-link mobile-link hover:text-brandGold transition-colors text-lg">What I Do</a>
-            <a href="#proof" class="nav-link mobile-link hover:text-brandGold transition-colors text-lg">Proof</a>
-            <a href="#contact" class="nav-link mobile-link mt-4 px-8 py-3 bg-brandGold text-black font-bold rounded-full transition-all">Collab With Me</a>
+            <div class="mt-6 pt-5 border-t border-gray-200 dark:border-white/10 flex items-center justify-center gap-6">
+                <a href="https://twitter.com/zazzkeee" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-700 dark:text-gray-300 hover:text-brandGold">
+                    <i class="fa-brands fa-x-twitter text-sm"></i>
+                </a>
+                <a href="https://t.me/zazkestribe" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-700 dark:text-gray-300 hover:text-brandGold">
+                    <i class="fa-brands fa-telegram text-base"></i>
+                </a>
+            </div>
         </div>
     </nav>
 
-    <!-- Hero Section (Asymmetrical Layout) -->
     <section id="hero" class="relative min-h-screen flex items-center pt-24 pb-12 overflow-hidden">
-        <div class="absolute inset-0 z-0 pointer-events-none">
-            <div class="absolute top-1/2 left-1/4 -translate-y-1/2 w-[400px] lg:w-[600px] h-[400px] lg:h-[600px] bg-brandGold/5 rounded-full blur-[120px] animate-pulse-slow"></div>
-        </div>
-        
         <div class="relative z-10 w-full max-w-[1400px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center pointer-events-none">
-            
-            <!-- Left Side: Text Content -->
             <div class="text-center lg:text-left order-2 lg:order-1 flex flex-col justify-center">
                 <p class="text-brandGold font-semibold tracking-[0.2em] text-xs md:text-sm mb-4 uppercase hero-element" id="hero-subtitle">Web3 Creator & Official Partner</p>
-                
-                <h1 class="text-5xl md:text-7xl lg:text-[5.5rem] leading-tight font-extrabold text-white mb-6 tracking-tight hero-element" id="hero-title">
+                <h1 class="text-5xl md:text-7xl lg:text-[5.5rem] leading-tight font-extrabold text-gray-900 dark:text-white mb-6 tracking-tight hero-element transition-colors" id="hero-title">
                     ZAZK<span class="text-transparent bg-clip-text bg-gradient-to-r from-brandGold to-yellow-200">EE</span>
                 </h1>
-                
-                <p class="text-base md:text-lg text-gray-400 max-w-xl mx-auto lg:mx-0 mb-10 hero-element" id="hero-desc">
-                    The bridge between platforms and people. Building real opportunities in the Web3 ecosystem with <span class="text-white font-semibold">zero gatekeeping</span>.
+                <p class="text-base md:text-lg text-gray-700 dark:text-gray-400 max-w-xl mx-auto lg:mx-0 mb-10 hero-element transition-colors" id="hero-desc">
+                    The bridge between platforms and people. Building real opportunities in the Web3 ecosystem with <span class="text-gray-900 dark:text-white font-semibold">zero gatekeeping</span>.
                 </p>
-                
                 <div class="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-4 pointer-events-auto hero-element" id="hero-cta">
-                    <a href="#contact" class="nav-link w-full sm:w-auto px-8 py-4 bg-brandGold hover:bg-brandDarkGold text-black font-bold rounded-full transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:scale-105">
+                    <a href="#contact" class="nav-link w-full sm:w-auto px-8 py-4 bg-brandGold hover:bg-brandDarkGold text-black font-bold rounded-full transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(234,179,8,0.3)]">
                         <i class="fa-solid fa-handshake"></i> Work with Me
                     </a>
-                    <a href="https://t.me/zazkestribe" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 text-white font-bold rounded-full border border-white/10 transition-all flex items-center justify-center gap-2 hover:scale-105">
+                    <a href="https://t.me/zazkestribe" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-gray-200 dark:bg-white/5 hover:bg-gray-300 dark:hover:bg-white/10 text-gray-900 dark:text-white font-bold rounded-full border border-gray-300 dark:border-white/10 transition-all flex items-center justify-center gap-2">
                         <i class="fa-brands fa-telegram"></i> Join the Tribe
                     </a>
                 </div>
-                <p class="mt-8 text-xs md:text-sm text-gray-600 font-medium uppercase tracking-[0.3em] hero-element" id="hero-footer">Welcome future Billionaire</p>
             </div>
-
-            <!-- Right Side: Elaborate Avatar -->
             <div class="flex justify-center lg:justify-end order-1 lg:order-2 pointer-events-auto hero-element" id="hero-img">
-                <div class="relative group animate-float mt-8 lg:mt-0 lg:mr-10">
-                    <div class="absolute inset-[-20px] bg-brandGold/15 rounded-full blur-2xl group-hover:bg-brandGold/30 transition-all duration-700"></div>
-                    
+                <div class="relative group mt-8 lg:mt-0 lg:mr-10">
                     <div class="relative w-56 h-56 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-full bg-gradient-to-br from-brandGold via-[#ca8a04]/40 to-transparent p-[3px] shadow-2xl">
                         <div class="w-full h-full rounded-full bg-[#050505] p-2">
                             <div class="w-full h-full rounded-full overflow-hidden relative border border-white/10">
                                 <img src="EpN_gAkS_400x400.png" class="w-full h-full object-cover transform scale-100 group-hover:scale-110 transition-transform duration-700" alt="ZAZKEE Avatar">
-                                <div class="absolute inset-0 rounded-full shadow-[inset_0_0_30px_rgba(0,0,0,0.9)] pointer-events-none"></div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-darker/90 backdrop-blur-xl border border-brandGold/30 text-white text-xs md:text-sm font-bold px-6 md:px-8 py-3 rounded-full z-20 shadow-[0_10px_40px_rgba(234,179,8,0.2)] whitespace-nowrap tracking-[0.2em] group-hover:border-brandGold transition-colors">
+                    <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-white dark:bg-darker/90 backdrop-blur-xl border border-gray-200 dark:border-brandGold/30 text-gray-900 dark:text-white text-xs md:text-sm font-bold px-6 md:px-8 py-3 rounded-full z-20 shadow-[0_10px_40px_rgba(234,179,8,0.2)] whitespace-nowrap tracking-[0.2em] transition-colors">
                         <span class="text-brandGold">VIP</span> MANAGER
                     </div>
                 </div>
@@ -264,167 +171,162 @@
         </div>
     </section>
 
-    <!-- Stats Banner -->
-    <div class="relative z-10 border-y border-white/5 bg-black/40 backdrop-blur-sm reveal">
+    <div class="relative z-10 border-y border-gray-200 dark:border-white/5 bg-white/40 dark:bg-black/40 backdrop-blur-sm reveal transition-colors">
         <div class="max-w-[1400px] mx-auto px-6 py-10">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 text-center">
                 <div>
-                    <h3 class="text-3xl md:text-4xl font-bold text-white mb-2">14.4K+</h3>
+                    <h3 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">14.4K+</h3>
                     <p class="text-xs md:text-sm text-gray-500 uppercase tracking-widest">X Followers</p>
                 </div>
                 <div>
-                    <h3 class="text-3xl md:text-4xl font-bold text-white mb-2">700+</h3>
+                    <h3 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">700+</h3>
                     <p class="text-xs md:text-sm text-gray-500 uppercase tracking-widest">Tribe Members</p>
                 </div>
                 <div>
-                    <h3 class="text-3xl md:text-4xl font-bold text-white mb-2">2,000+</h3>
+                    <h3 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">2,000+</h3>
                     <p class="text-xs md:text-sm text-gray-500 uppercase tracking-widest">Mini KOLs</p>
                 </div>
                 <div>
-                    <h3 class="text-3xl md:text-4xl font-bold text-brandGold mb-2">100%</h3>
-                    <p class="text-xs md:text-sm text-gray-500 uppercase tracking-widest">Transparent</p>
+                    <h3 class="text-3xl md:text-4xl font-bold text-brandGold mb-2">100+</h3>
+                    <p class="text-xs md:text-sm text-gray-500 uppercase tracking-widest">Giveaways</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- About Section -->
     <section id="about" class="py-24 md:py-32 relative scroll-mt-20 overflow-hidden z-10">
         <div class="max-w-[1400px] mx-auto px-6 relative z-10 reveal">
-            <div class="glass-card rounded-3xl p-8 md:p-12 lg:p-16 border-l-4 border-l-brandGold flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
+            <div class="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/5 rounded-3xl p-8 md:p-12 lg:p-16 border-l-4 border-l-brandGold flex flex-col lg:flex-row gap-12 lg:gap-20 items-center transition-colors">
                 
                 <div class="w-full lg:w-1/2 text-center lg:text-left">
                     <h2 class="text-xs md:text-sm font-bold text-brandGold tracking-widest uppercase mb-4">Identity & Vision</h2>
-                    <h3 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">From Colombia to the World.</h3>
-                    <p class="text-gray-400 text-base md:text-lg leading-relaxed">
+                    <h3 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">From Colombia to the World.</h3>
+                    <p class="text-gray-700 dark:text-gray-400 text-base md:text-lg leading-relaxed">
                         Based in Colombia 🇨🇴 with global reach, my mission is simple: to become the premier crypto KOL in my country, opening doors for emerging creators worldwide. Since 2022, I have been dedicated to connecting the best platforms in the ecosystem with an active, verifiable, and growth-hungry community.
                     </p>
                 </div>
 
                 <div class="w-full lg:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-8">
-                    <div class="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-brandGold/30 transition-colors text-center lg:text-left">
+                    <div class="bg-white/80 dark:bg-white/5 p-6 rounded-2xl border border-gray-200 dark:border-white/5 hover:border-brandGold/30 transition-colors text-center lg:text-left">
                         <i class="fa-solid fa-door-open text-brandGold text-3xl mb-4"></i>
-                        <h4 class="text-white font-bold text-lg mb-2">Zero Gatekeeping</h4>
-                        <p class="text-sm text-gray-400">Real opportunities for everyone.</p>
+                        <h4 class="text-gray-900 dark:text-white font-bold text-lg mb-2">Zero Gatekeeping</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Real opportunities for everyone.</p>
                     </div>
-                    <div class="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-brandGold/30 transition-colors text-center lg:text-left">
+                    <div class="bg-white/80 dark:bg-white/5 p-6 rounded-2xl border border-gray-200 dark:border-white/5 hover:border-brandGold/30 transition-colors text-center lg:text-left">
                         <i class="fa-solid fa-magnifying-glass text-brandGold text-3xl mb-4"></i>
-                        <h4 class="text-white font-bold text-lg mb-2">Transparency</h4>
-                        <p class="text-sm text-gray-400">Every giveaway is documented.</p>
+                        <h4 class="text-gray-900 dark:text-white font-bold text-lg mb-2">Transparency</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Every giveaway is documented.</p>
                     </div>
-                    <div class="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-brandGold/30 transition-colors text-center lg:text-left sm:col-span-2 lg:col-span-1">
+                    <div class="bg-white/80 dark:bg-white/5 p-6 rounded-2xl border border-gray-200 dark:border-white/5 hover:border-brandGold/30 transition-colors text-center lg:text-left sm:col-span-2 lg:col-span-1">
                         <i class="fa-solid fa-users text-brandGold text-3xl mb-4"></i>
-                        <h4 class="text-white font-bold text-lg mb-2">Community First</h4>
-                        <p class="text-sm text-gray-400">Growing together with the Tribe.</p>
+                        <h4 class="text-gray-900 dark:text-white font-bold text-lg mb-2">Community First</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Growing together with the Tribe.</p>
                     </div>
                 </div>
-
             </div>
         </div>
     </section>
 
-    <!-- Partnerships Section -->
-    <section id="partnerships" class="py-24 md:py-32 relative bg-darker/60 backdrop-blur-md scroll-mt-20 z-10">
+    <section id="partnerships" class="py-24 md:py-32 relative bg-white/40 dark:bg-darker/60 backdrop-blur-md scroll-mt-20 z-10 transition-colors">
         <div class="max-w-[1400px] mx-auto px-6">
             <div class="text-center mb-16 reveal">
                 <h2 class="text-xs md:text-sm font-bold text-brandGold tracking-widest uppercase mb-2">Ecosystem Affiliations</h2>
-                <h3 class="text-3xl md:text-5xl font-bold text-white">Trusted by Industry Leaders</h3>
+                <h3 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white">Trusted by Industry Leaders</h3>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-                <div class="glass-card rounded-2xl p-8 group flex flex-col items-center text-center reveal delay-100">
-                    <img src="parimatch.jpg" alt="Parimatch" class="w-24 h-24 rounded-full mb-6 object-cover border-2 border-white/10 group-hover:border-brandGold transition-colors shadow-lg">
-                    <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-brandGold transition-colors">Parimatch</h4>
-                    <p class="text-gray-400 text-sm mb-6 flex-grow">Official Partner. Bridging platforms with authentic communities.</p>
-                    <div class="mt-auto inline-block bg-white/5 px-4 py-1.5 rounded text-sm font-mono text-brandGold border border-brandGold/20">Code: ZAZKEEE</div>
+                <div class="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/5 rounded-2xl p-8 group flex flex-col items-center text-center reveal delay-100 transition-colors">
+                    <img src="parimatch.jpg" alt="Parimatch" class="w-24 h-24 rounded-full mb-6 object-cover border-2 border-gray-200 dark:border-white/10 group-hover:border-brandGold transition-colors shadow-lg">
+                    <h4 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-brandGold transition-colors">Parimatch</h4>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-grow">Official Partner. Bridging platforms with authentic communities.</p>
+                    <div class="mt-auto inline-block bg-gray-100 dark:bg-white/5 px-4 py-1.5 rounded text-sm font-mono text-brandGold border border-brandGold/20">Code: ZAZKEEE</div>
                 </div>
 
-                <div class="glass-card rounded-2xl p-8 group flex flex-col items-center text-center reveal delay-200">
-                    <img src="fortunejackpot.jpg" alt="FortuneJack" class="w-24 h-24 rounded-full mb-6 object-cover border-2 border-white/10 group-hover:border-brandGold transition-colors shadow-lg">
-                    <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-brandGold transition-colors">FortuneJack</h4>
-                    <p class="text-gray-400 text-sm mb-6 flex-grow">Official KOL Manager. Crypto gaming with instant payouts.</p>
-                    <div class="mt-auto inline-block bg-white/5 px-4 py-1.5 rounded text-sm font-mono text-brandGold border border-brandGold/20">Code: Zazke</div>
+                <div class="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/5 rounded-2xl p-8 group flex flex-col items-center text-center reveal delay-200 transition-colors">
+                    <img src="fortunejackpot.jpg" alt="FortuneJack" class="w-24 h-24 rounded-full mb-6 object-cover border-2 border-gray-200 dark:border-white/10 group-hover:border-brandGold transition-colors shadow-lg">
+                    <h4 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-brandGold transition-colors">FortuneJack</h4>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-grow">Official KOL Manager. Crypto gaming with instant payouts.</p>
+                    <div class="mt-auto inline-block bg-gray-100 dark:bg-white/5 px-4 py-1.5 rounded text-sm font-mono text-brandGold border border-brandGold/20">Code: Zazke</div>
                 </div>
 
-                <div class="glass-card rounded-2xl p-8 group flex flex-col items-center text-center reveal delay-300">
-                    <img src="goodpack.jpg" alt="Godpack.io" class="w-24 h-24 rounded-full mb-6 object-cover border-2 border-white/10 group-hover:border-brandGold transition-colors shadow-lg">
-                    <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-brandGold transition-colors">Godpack.io</h4>
-                    <p class="text-gray-400 text-sm mb-6 flex-grow">Partnership Team & KOL Manager. Creating real ecosystem value.</p>
+                <div class="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/5 rounded-2xl p-8 group flex flex-col items-center text-center reveal delay-300 transition-colors">
+                    <img src="goodpack.jpg" alt="Godpack.io" class="w-24 h-24 rounded-full mb-6 object-cover border-2 border-gray-200 dark:border-white/10 group-hover:border-brandGold transition-colors shadow-lg">
+                    <h4 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-brandGold transition-colors">Godpack.io</h4>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-grow">Partnership Team & KOL Manager. Creating real ecosystem value.</p>
                 </div>
 
-                <div class="glass-card rounded-2xl p-8 group flex flex-col items-center text-center reveal delay-400">
-                    <img src="flip.gg.jpg" alt="Flip.gg" class="w-24 h-24 rounded-full mb-6 object-cover border-2 border-white/10 group-hover:border-brandGold transition-colors shadow-lg">
-                    <h4 class="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-brandGold transition-colors">Flip.gg</h4>
-                    <p class="text-gray-400 text-sm mb-6 flex-grow">Partnership Team / Strategy & Rewards distribution.</p>
+                <div class="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/5 rounded-2xl p-8 group flex flex-col items-center text-center reveal delay-400 transition-colors">
+                    <img src="flip.gg.jpg" alt="Flip.gg" class="w-24 h-24 rounded-full mb-6 object-cover border-2 border-gray-200 dark:border-white/10 group-hover:border-brandGold transition-colors shadow-lg">
+                    <h4 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-brandGold transition-colors">Flip.gg</h4>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-grow">Partnership Team / Strategy & Rewards distribution.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- What I Do Section -->
-    <section id="services" class="py-24 md:py-32 relative bg-[#0a0a0c]/80 backdrop-blur-md border-y border-white/5 scroll-mt-20 z-10">
+    <section id="services" class="py-24 md:py-32 relative bg-white/80 dark:bg-[#0a0a0c]/80 backdrop-blur-md border-y border-gray-200 dark:border-white/5 scroll-mt-20 z-10 transition-colors">
         <div class="max-w-[1400px] mx-auto px-6">
             <div class="text-center mb-16 reveal">
                 <h2 class="text-xs md:text-sm font-bold text-brandGold tracking-widest uppercase mb-2">My Expertise</h2>
-                <h3 class="text-3xl md:text-5xl font-bold text-white">Delivering Value on Both Sides</h3>
+                <h3 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white">Delivering Value on Both Sides</h3>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
-                <div class="glass-card p-8 md:p-12 rounded-3xl reveal delay-100">
+                <div class="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/5 p-8 md:p-12 rounded-3xl reveal delay-100 transition-colors">
                     <div class="flex items-center justify-center lg:justify-start gap-4 mb-10 text-center lg:text-left">
                         <div class="w-14 h-14 rounded-full bg-brandGold/10 flex shrink-0 items-center justify-center text-brandGold text-2xl"><i class="fa-solid fa-building"></i></div>
-                        <h4 class="text-2xl md:text-3xl font-bold text-white">For Platforms</h4>
+                        <h4 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">For Platforms</h4>
                     </div>
                     <ul class="space-y-8">
                         <li class="flex gap-5 items-start text-left">
                             <i class="fa-solid fa-check text-brandGold text-xl mt-1 shrink-0"></i>
                             <div>
-                                <h5 class="text-white font-semibold text-lg mb-2">Strategic KOL Management</h5>
-                                <p class="text-base text-gray-400">Connecting top-tier Web3 projects with verified, high-engagement creators.</p>
+                                <h5 class="text-gray-900 dark:text-white font-semibold text-lg mb-2">Strategic KOL Management</h5>
+                                <p class="text-base text-gray-600 dark:text-gray-400">Connecting top-tier Web3 projects with verified, high-engagement creators.</p>
                             </div>
                         </li>
                         <li class="flex gap-5 items-start text-left">
                             <i class="fa-solid fa-check text-brandGold text-xl mt-1 shrink-0"></i>
                             <div>
-                                <h5 class="text-white font-semibold text-lg mb-2">Campaign Activation</h5>
-                                <p class="text-base text-gray-400">Allocating slots and badges (e.g., FortuneJack) to maximize targeted impressions.</p>
+                                <h5 class="text-gray-900 dark:text-white font-semibold text-lg mb-2">Campaign Activation</h5>
+                                <p class="text-base text-gray-600 dark:text-gray-400">Allocating slots and badges (e.g., FortuneJack) to maximize targeted impressions.</p>
                             </div>
                         </li>
                         <li class="flex gap-5 items-start text-left">
                             <i class="fa-solid fa-check text-brandGold text-xl mt-1 shrink-0"></i>
                             <div>
-                                <h5 class="text-white font-semibold text-lg mb-2">Authentic Engagement</h5>
-                                <p class="text-base text-gray-400">Driving real metrics through transparent reward distribution.</p>
+                                <h5 class="text-gray-900 dark:text-white font-semibold text-lg mb-2">Authentic Engagement</h5>
+                                <p class="text-base text-gray-600 dark:text-gray-400">Driving real metrics through transparent reward distribution.</p>
                             </div>
                         </li>
                     </ul>
                 </div>
 
-                <div class="glass-card p-8 md:p-12 rounded-3xl reveal delay-200">
+                <div class="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/5 p-8 md:p-12 rounded-3xl reveal delay-200 transition-colors">
                     <div class="flex items-center justify-center lg:justify-start gap-4 mb-10 text-center lg:text-left">
-                        <div class="w-14 h-14 rounded-full bg-white/5 border border-white/10 flex shrink-0 items-center justify-center text-white text-2xl"><i class="fa-solid fa-users"></i></div>
-                        <h4 class="text-2xl md:text-3xl font-bold text-white">For Community</h4>
+                        <div class="w-14 h-14 rounded-full bg-gray-200 dark:bg-white/5 border border-gray-300 dark:border-white/10 flex shrink-0 items-center justify-center text-gray-900 dark:text-white text-2xl"><i class="fa-solid fa-users"></i></div>
+                        <h4 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">For Community</h4>
                     </div>
                     <ul class="space-y-8">
                         <li class="flex gap-5 items-start text-left">
-                            <i class="fa-solid fa-arrow-right text-gray-500 text-xl mt-1 shrink-0"></i>
+                            <i class="fa-solid fa-arrow-right text-gray-400 dark:text-gray-500 text-xl mt-1 shrink-0"></i>
                             <div>
-                                <h5 class="text-white font-semibold text-lg mb-2">Alpha & Honest Callouts</h5>
-                                <p class="text-base text-gray-400">Honest analysis of memecoins on Pump.fun and early airdrops. No cap.</p>
+                                <h5 class="text-gray-900 dark:text-white font-semibold text-lg mb-2">Alpha & Honest Callouts</h5>
+                                <p class="text-base text-gray-600 dark:text-gray-400">Honest analysis of memecoins on Pump.fun and early airdrops. No cap.</p>
                             </div>
                         </li>
                         <li class="flex gap-5 items-start text-left">
-                            <i class="fa-solid fa-arrow-right text-gray-500 text-xl mt-1 shrink-0"></i>
+                            <i class="fa-solid fa-arrow-right text-gray-400 dark:text-gray-500 text-xl mt-1 shrink-0"></i>
                             <div>
-                                <h5 class="text-white font-semibold text-lg mb-2">Massive Giveaways</h5>
-                                <p class="text-base text-gray-400">$SOL drops, engagement challenges, and 100% verifiable winner selection.</p>
+                                <h5 class="text-gray-900 dark:text-white font-semibold text-lg mb-2">Massive Giveaways</h5>
+                                <p class="text-base text-gray-600 dark:text-gray-400">$SOL drops, engagement challenges, and 100% verifiable winner selection.</p>
                             </div>
                         </li>
                         <li class="flex gap-5 items-start text-left">
-                            <i class="fa-solid fa-arrow-right text-gray-500 text-xl mt-1 shrink-0"></i>
+                            <i class="fa-solid fa-arrow-right text-gray-400 dark:text-gray-500 text-xl mt-1 shrink-0"></i>
                             <div>
-                                <h5 class="text-white font-semibold text-lg mb-2">Mini KOL Escalation</h5>
-                                <p class="text-base text-gray-400">Opening doors for emerging creators to scale their accounts and reach.</p>
+                                <h5 class="text-gray-900 dark:text-white font-semibold text-lg mb-2">Mini KOL Escalation</h5>
+                                <p class="text-base text-gray-600 dark:text-gray-400">Opening doors for emerging creators to scale their accounts and reach.</p>
                             </div>
                         </li>
                     </ul>
@@ -433,374 +335,58 @@
         </div>
     </section>
 
-    <!-- Proof Section -->
     <section id="proof" class="py-24 md:py-32 relative scroll-mt-20 z-10">
         <div class="max-w-[1400px] mx-auto px-6 text-center">
             <h2 class="text-xs md:text-sm font-bold text-brandGold tracking-widest uppercase mb-2 reveal">Social Proof</h2>
-            <h3 class="text-3xl md:text-5xl font-bold text-white mb-12 reveal">Verifiable Impact. Real Proof.</h3>
+            <h3 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-12 reveal">Verifiable Impact. Real Proof.</h3>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                <div class="glass-card p-8 md:p-10 rounded-2xl reveal delay-100">
+                <div class="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/5 p-8 md:p-10 rounded-2xl reveal delay-100 transition-colors">
                     <i class="fa-solid fa-hand-holding-dollar text-5xl text-brandGold mb-6"></i>
-                    <h4 class="text-2xl font-bold text-white mb-3">Documented Payouts</h4>
-                    <p class="text-base text-gray-400">Every giveaway and reward is delivered publicly. Transparency is non-negotiable.</p>
+                    <h4 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">Documented Payouts</h4>
+                    <p class="text-base text-gray-600 dark:text-gray-400">Every giveaway and reward is delivered publicly. Transparency is non-negotiable.</p>
                 </div>
-                <div class="glass-card p-8 md:p-10 rounded-2xl reveal delay-200">
+                <div class="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/5 p-8 md:p-10 rounded-2xl reveal delay-200 transition-colors">
                     <i class="fa-solid fa-heart-pulse text-5xl text-brandGold mb-6"></i>
-                    <h4 class="text-2xl font-bold text-white mb-3">Charity Actions</h4>
-                    <p class="text-base text-gray-400">Over $2,000+ raised and transparently delivered after the earthquake in Colombia.</p>
+                    <h4 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">Charity Actions</h4>
+                    <p class="text-base text-gray-600 dark:text-gray-400">Over $2,000+ raised and transparently delivered after the earthquake in Colombia.</p>
                 </div>
-                <div class="glass-card p-8 md:p-10 rounded-2xl reveal delay-300">
+                <div class="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/5 p-8 md:p-10 rounded-2xl reveal delay-300 transition-colors">
                     <i class="fa-solid fa-chart-line text-5xl text-brandGold mb-6"></i>
-                    <h4 class="text-2xl font-bold text-white mb-3">Real Engagement</h4>
-                    <p class="text-base text-gray-400">Callouts and partnerships average massive organic interactions and impressions on X.</p>
+                    <h4 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">Real Engagement</h4>
+                    <p class="text-base text-gray-600 dark:text-gray-400">Callouts and partnerships average massive organic interactions and impressions on X.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer / Contact -->
-    <footer id="contact" class="py-24 md:py-32 relative overflow-hidden bg-[#020202] border-t border-white/5 scroll-mt-20 z-10">
+    <footer id="contact" class="py-24 md:py-32 relative overflow-hidden bg-gray-100 dark:bg-[#020202] border-t border-gray-300 dark:border-white/5 scroll-mt-20 z-10 transition-colors">
         <div class="absolute inset-0 z-0 pointer-events-none">
             <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[90%] md:w-[80%] h-[300px] bg-brandGold/10 blur-[150px]"></div>
         </div>
         <div class="relative z-10 max-w-[1400px] mx-auto px-6 text-center reveal">
-            <img src="EpN_gAkS_400x400.png" alt="ZAZKEE" class="w-24 h-24 rounded-full mx-auto mb-8 border-2 border-white/10 opacity-75 hover:opacity-100 hover:border-brandGold transition-all duration-500 object-cover">
-            <h2 class="text-4xl md:text-6xl font-bold text-white mb-6">Ready to scale your Web3 presence?</h2>
-            <p class="text-gray-400 mb-12 text-lg md:text-xl max-w-2xl mx-auto">Dm me if you need collabs. I have to become the first biggest crypto KOL in Colombia 🇨🇴 — Locked in.</p>
+            <img src="EpN_gAkS_400x400.png" alt="ZAZKEE" class="w-24 h-24 rounded-full mx-auto mb-8 border-2 border-gray-300 dark:border-white/10 opacity-75 hover:opacity-100 hover:border-brandGold transition-all duration-500 object-cover">
+            <h2 class="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">Ready to scale your Web3 presence?</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-12 text-lg md:text-xl max-w-2xl mx-auto">Dm me if you need collabs. I have to become the first biggest crypto KOL in Colombia 🇨🇴 — Locked in.</p>
             
             <div class="flex justify-center gap-8 mb-20">
-                <!-- X Logo Integrado -->
-                <a href="https://twitter.com/zazzkeee" target="_blank" class="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brandGold hover:border-brandGold hover:scale-110 transition-all shadow-lg overflow-hidden group">
-                    <img src="xlogo (1).png" alt="X Logo" class="w-8 h-8 object-contain group-hover:brightness-0 transition-all">
+                <a href="https://twitter.com/zazzkeee" target="_blank" class="w-16 h-16 rounded-full bg-white dark:bg-white/5 border border-gray-300 dark:border-white/10 flex items-center justify-center hover:bg-brandGold hover:border-brandGold hover:scale-110 transition-all shadow-lg overflow-hidden group">
+                    <img src="xlogo (1).png" alt="X Logo" class="w-8 h-8 object-contain dark:invert-0 invert group-hover:invert-0 transition-all">
                 </a>
                 
-                <a href="https://t.me/zazkestribe" target="_blank" class="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-3xl text-white hover:bg-brandGold hover:text-black hover:border-brandGold hover:scale-110 transition-all shadow-lg">
+                <a href="https://t.me/zazkestribe" target="_blank" class="w-16 h-16 rounded-full bg-white dark:bg-white/5 border border-gray-300 dark:border-white/10 flex items-center justify-center text-3xl text-gray-900 dark:text-white hover:bg-brandGold hover:text-black hover:border-brandGold hover:scale-110 transition-all shadow-lg">
                     <i class="fa-brands fa-telegram"></i>
                 </a>
             </div>
 
-            <div class="pt-8 border-t border-white/10 text-sm text-gray-600 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="pt-8 border-t border-gray-300 dark:border-white/10 text-sm text-gray-500 flex flex-col md:flex-row justify-between items-center gap-4">
                 <p>&copy; 2026 ZAZKEE. All rights reserved.</p>
                 <p class="font-medium text-brandGold/70 uppercase tracking-[0.2em] text-xs">Welcome future Billionaire</p>
             </div>
         </div>
     </footer>
 
-    <!-- GSAP for Preloader -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
-    <script>
-        // --- 1. PRELOADER & AUDIO LOGIC ---
-        document.addEventListener("DOMContentLoaded", () => {
-            const loaderCounter = document.getElementById('loader-counter');
-            const loaderStatus = document.getElementById('loader-status');
-            const fillText = document.getElementById('loading-text-fill');
-            const enterBtn = document.getElementById('enter-btn');
-            
-            const statusPhrases = [
-                "CONNECTING WALLET...", 
-                "ANALYZING ODDS...", 
-                "SECURING COLLABS...", 
-                "JACKPOT READY"
-            ];
-            
-            let progress = { value: 0 };
-            
-            const masterTl = gsap.timeline();
-
-            // Animate width of the gold overlay text from 0% to 100%
-            masterTl.to(progress, {
-                value: 100,
-                duration: 3.5, 
-                ease: "power2.inOut",
-                onUpdate: () => {
-                    let currentProgress = Math.round(progress.value);
-                    
-                    fillText.style.width = currentProgress + '%';
-
-                    if(currentProgress < 100) {
-                        let randomGlitch = Math.floor(Math.random() * 9);
-                        loaderCounter.innerText = currentProgress + randomGlitch + '%';
-                    } else {
-                        // At 100%, show ENTER button instead of auto-skipping
-                        loaderCounter.style.display = 'none';
-                        fillText.style.borderRight = 'none'; 
-                        
-                        gsap.to(enterBtn, { autoAlpha: 1, y: 0, duration: 0.5, ease: "back.out(1.5)" });
-                    }
-
-                    if (currentProgress > 25 && currentProgress < 50) loaderStatus.innerText = statusPhrases[1];
-                    if (currentProgress >= 50 && currentProgress < 90) loaderStatus.innerText = statusPhrases[2];
-                    if (currentProgress >= 90) {
-                        loaderStatus.innerText = statusPhrases[3];
-                        loaderStatus.style.color = '#fff'; 
-                    }
-                }
-            });
-
-            // Handle "ENTER" Button Click (Plays sound and reveals site)
-            enterBtn.addEventListener('click', () => {
-                // Play Audio
-                const sound = document.getElementById('introSound');
-                if (sound) {
-                    sound.volume = 0.5; // Volumen moderado
-                    sound.play().catch(e => console.log("Audio play failed:", e));
-                }
-
-                // Hide loader content
-                gsap.to('.loader-content', {
-                    opacity: 0,
-                    scale: 1.05,
-                    duration: 0.5,
-                    ease: "power3.in"
-                });
-
-                // Slide curtain up
-                gsap.to('#preloader', {
-                    yPercent: -100,
-                    duration: 1,
-                    delay: 0.3,
-                    ease: "expo.inOut",
-                    onComplete: () => {
-                        document.body.classList.remove('no-scroll');
-                        
-                        // Reveal Hero Elements
-                        if(window.innerWidth >= 1024) {
-                            gsap.to('#hero-img', { autoAlpha: 1, x: 0, y: 0, duration: 1.2, ease: 'power3.out' });
-                        } else {
-                            gsap.to('#hero-img', { autoAlpha: 1, y: 0, duration: 1.2, ease: 'power3.out' });
-                        }
-                        gsap.to('#hero-subtitle', { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: 0.2 });
-                        gsap.to('#hero-title', { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: 0.4 });
-                        gsap.to('#hero-desc', { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: 0.6 });
-                        gsap.to('#hero-cta', { autoAlpha: 1, y: 0, duration: 0.8, ease: 'back.out(1.5)', delay: 0.8 });
-                        gsap.to('#hero-footer', { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: 1 });
-                    }
-                });
-            });
-            
-            // Adjust Hero Elements initial state
-            if(window.innerWidth >= 1024) {
-                gsap.set('#hero-img', { autoAlpha: 0, x: 50 });
-            }
-        });
-
-        // --- 2. Mobile Menu Logic ---
-        const menuBtn = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const icon = menuBtn.querySelector('i');
-        const mobileLinks = document.querySelectorAll('.mobile-link');
-
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('open');
-            if (mobileMenu.classList.contains('open')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-xmark');
-            } else {
-                icon.classList.remove('fa-xmark');
-                icon.classList.add('fa-bars');
-            }
-        });
-
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.remove('open');
-                icon.classList.remove('fa-xmark');
-                icon.classList.add('fa-bars');
-            });
-        });
-
-        // --- 3. Scroll Reveal Animations ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.15
-            };
-
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                    }
-                });
-            }, observerOptions);
-
-            document.querySelectorAll('.reveal').forEach((el) => {
-                if(el.classList.contains('hero-element')) {
-                    if(window.innerWidth < 1024) {
-                       gsap.set(el, { y: 40, autoAlpha: 0 });
-                    }
-                } else {
-                    observer.observe(el);
-                }
-            });
-        });
-
-        // --- 4. Smooth Scrolling ---
-        document.querySelectorAll('a.nav-link').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                } else {
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                }
-            });
-        });
-
-        // --- 5. FIXED Interactive Particle Network ---
-        const canvas = document.getElementById('networkCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        let width, height;
-        let particles = [];
-        let lastWidth = window.innerWidth; // Guarda el ancho para evitar reinicios al scrollear en móvil
-        
-        const mouse = { x: null, y: null, radius: 150 };
-
-        window.addEventListener('mousemove', function(event) {
-            mouse.x = event.x;
-            mouse.y = event.y;
-        });
-
-        window.addEventListener('touchmove', function(event) {
-            mouse.x = event.touches[0].clientX;
-            mouse.y = event.touches[0].clientY;
-        });
-
-        window.addEventListener('mouseout', function() { mouse.x = undefined; mouse.y = undefined; });
-        window.addEventListener('touchend', function() { mouse.x = undefined; mouse.y = undefined; });
-
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-
-        window.addEventListener('resize', () => {
-            // SOLO reinicia las partículas si cambió el ANCHO de la pantalla (ej. rotar teléfono)
-            if (window.innerWidth !== lastWidth) {
-                lastWidth = window.innerWidth;
-                resize();
-                initParticles();
-            } else {
-                // Si solo cambió el alto (por la barra del navegador), solo ajustamos el canvas sin borrar las partículas
-                height = canvas.height = window.innerHeight;
-            }
-        });
-
-        class Particle {
-            constructor(x, y, directionX, directionY, size, color) {
-                this.x = x; this.y = y;
-                this.directionX = directionX; this.directionY = directionY;
-                this.size = size; this.color = color;
-            }
-            
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-            }
-            
-            update() {
-                if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
-                if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
-
-                if (mouse.x && mouse.y) {
-                    let dx = mouse.x - this.x;
-                    let dy = mouse.y - this.y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < mouse.radius) {
-                        const forceDirectionX = dx / distance;
-                        const forceDirectionY = dy / distance;
-                        const force = (mouse.radius - distance) / mouse.radius;
-                        const directionX = forceDirectionX * force * 2;
-                        const directionY = forceDirectionY * force * 2;
-                        
-                        this.x -= directionX;
-                        this.y -= directionY;
-                    }
-                }
-                
-                this.x += this.directionX;
-                this.y += this.directionY;
-                this.draw();
-            }
-        }
-
-        function initParticles() {
-            particles = [];
-            let divisor = window.innerWidth < 768 ? 25000 : 15000;
-            let numberOfParticles = (canvas.height * canvas.width) / divisor;
-            if(numberOfParticles > 100) numberOfParticles = 100; 
-            
-            for (let i = 0; i < numberOfParticles; i++) {
-                let size = (Math.random() * 2) + 1;
-                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
-                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
-                let directionX = (Math.random() * 1) - 0.5;
-                let directionY = (Math.random() * 1) - 0.5;
-                let color = 'rgba(234, 179, 8, 0.4)';
-                particles.push(new Particle(x, y, directionX, directionY, size, color));
-            }
-        }
-
-        function connectParticles() {
-            let opacityValue = 1;
-            let connectionDistance = window.innerWidth < 768 ? 10000 : 20000; 
-
-            for (let a = 0; a < particles.length; a++) {
-                for (let b = a; b < particles.length; b++) {
-                    let distance = ((particles[a].x - particles[b].x) * (particles[a].x - particles[b].x)) 
-                                 + ((particles[a].y - particles[b].y) * (particles[a].y - particles[b].y));
-                    
-                    if (distance < connectionDistance) {
-                        opacityValue = 1 - (distance / connectionDistance);
-                        if (opacityValue > 0) {
-                            ctx.strokeStyle = 'rgba(234, 179, 8,' + opacityValue * 0.2 + ')';
-                            ctx.lineWidth = 1;
-                            ctx.beginPath();
-                            ctx.moveTo(particles[a].x, particles[a].y);
-                            ctx.lineTo(particles[b].x, particles[b].y);
-                            ctx.stroke();
-                        }
-                    }
-                }
-                
-                if (mouse.x && mouse.y) {
-                    let mouseDistance = ((particles[a].x - mouse.x) * (particles[a].x - mouse.x)) 
-                                      + ((particles[a].y - mouse.y) * (particles[a].y - mouse.y));
-                    if (mouseDistance < 15000) {
-                        ctx.strokeStyle = 'rgba(234, 179, 8,' + (1 - mouseDistance/15000) * 0.5 + ')';
-                        ctx.lineWidth = 1.5;
-                        ctx.beginPath();
-                        ctx.moveTo(particles[a].x, particles[a].y);
-                        ctx.lineTo(mouse.x, mouse.y);
-                        ctx.stroke();
-                    }
-                }
-            }
-        }
-
-        function animateNetwork() {
-            requestAnimationFrame(animateNetwork);
-            ctx.clearRect(0, 0, innerWidth, innerHeight);
-            
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].update();
-            }
-            connectParticles();
-        }
-
-        resize();
-        initParticles();
-        animateNetwork();
-    </script>
+    <script src="js/app.js"></script>
 </body>
 </html>

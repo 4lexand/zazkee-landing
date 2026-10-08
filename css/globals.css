@@ -1,0 +1,98 @@
+body {
+    background-color: #050505;
+    color: #e2e8f0;
+    overflow-x: hidden;
+    background-image: 
+        radial-gradient(circle at 15% 50%, rgba(234, 179, 8, 0.03), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.02), transparent 25%);
+}
+
+.no-scroll { overflow: hidden !important; }
+
+/* --- High-End Preloader Styles --- */
+#preloader {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background-color: #030303;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.text-outline {
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(234, 179, 8, 0.2);
+}
+
+#loading-text-fill {
+    width: 0%;
+    white-space: nowrap;
+    overflow: hidden;
+    color: #EAB308;
+    text-shadow: 0 0 40px rgba(234, 179, 8, 0.6);
+    border-right: 2px solid rgba(234, 179, 8, 0.8);
+    box-shadow: inset -5px 0 10px -5px rgba(234, 179, 8, 0.5);
+}
+
+/* --- General Components --- */
+.glass-card {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+    border-color: rgba(234, 179, 8, 0.4);
+    box-shadow: 0 10px 30px -10px rgba(234, 179, 8, 0.15);
+    transform: translateY(-5px);
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.delay-100 { transition-delay: 100ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+
+.hero-element {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Mobile Menu Transitions */
+#mobile-menu {
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+#mobile-menu.open {
+    max-height: 550px;
+    opacity: 1;
+}
+
+#enter-btn {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+}
+
+/* --- GARANTÍA DE SCROLL (Anti-Bloqueo) --- */
+html, body {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: auto !important;
+}
