@@ -186,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
         sections.forEach(sec => observer.observe(sec));
     }
 
-    // 6. LÓGICA DE MODO LUZ Y OSCURO (Con Posters para carga móvil instantánea)
+   // 6. LÓGICA DE MODO LUZ Y OSCURO (Optimizada para carga inicial móvil)
     const themeToggleBtn = document.getElementById('theme-toggle');
     const themeIcon = document.getElementById('theme-icon');
     const themeToggleMobile = document.getElementById('theme-toggle-mobile');
@@ -198,21 +198,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const savedTheme = localStorage.getItem('zazkee_theme') || 'dark';
 
-    function applyTheme(theme) {
-        if (theme === 'light') {
+    function applyTheme(theme, isInitialLoad = false) {
+        const isLight = theme === 'light';
+        const targetSrc = isLight ? 'videoLuz.mp4' : 'videoNo.mp4';
+        const targetPoster = isLight ? 'poster-luz.jpg' : 'poster-noche.jpg';
+
+        // 1. Cambiar clases y colores
+        if (isLight) {
             htmlEl.classList.remove('dark');
             if (themeIcon) { themeIcon.classList.remove('fa-moon'); themeIcon.classList.add('fa-sun'); }
             if (themeIconMobile) { themeIconMobile.classList.remove('fa-moon'); themeIconMobile.classList.add('fa-sun'); }
-            
-            if (bgVideo) {
-                bgVideo.style.opacity = '0';
-                setTimeout(() => {
-                    bgVideo.poster = 'poster-luz.jpg'; // Imagen para móviles (Día)
-                    bgVideo.src = 'videoLuz.mp4';
-                    bgVideo.play().catch(e => console.log("Autoplay bloqueado", e));
-                    bgVideo.style.opacity = '0.9';
-                }, 300);
-            }
             if (videoOverlay) {
                 videoOverlay.classList.remove('bg-black/60', 'bg-black/50');
                 videoOverlay.classList.add('bg-white/60'); 
@@ -222,31 +217,45 @@ document.addEventListener("DOMContentLoaded", () => {
             htmlEl.classList.add('dark');
             if (themeIcon) { themeIcon.classList.remove('fa-sun'); themeIcon.classList.add('fa-moon'); }
             if (themeIconMobile) { themeIconMobile.classList.remove('fa-sun'); themeIconMobile.classList.add('fa-moon'); }
-            
-            if (bgVideo) {
-                bgVideo.style.opacity = '0';
-                setTimeout(() => {
-                    bgVideo.poster = 'poster-noche.jpg'; // Imagen para móviles (Noche)
-                    bgVideo.src = 'videoNo.mp4';
-                    bgVideo.play().catch(e => console.log("Autoplay bloqueado", e));
-                    bgVideo.style.opacity = '0.9';
-                }, 300);
-            }
             if (videoOverlay) {
                 videoOverlay.classList.remove('bg-white/60');
                 videoOverlay.classList.add('bg-black/60'); 
             }
             localStorage.setItem('zazkee_theme', 'dark');
         }
+
+        // 2. Lógica del Video: Evitar reiniciar la descarga inicial
+        if (bgVideo) {
+            // Solo modificamos el 'src' si es distinto al que ya está cargando el HTML
+            if (!bgVideo.src.includes(targetSrc)) {
+                if (isInitialLoad) {
+                    bgVideo.poster = targetPoster;
+                    bgVideo.src = targetSrc;
+                    bgVideo.style.opacity = '0.9';
+                } else {
+                    bgVideo.style.opacity = '0';
+                    setTimeout(() => {
+                        bgVideo.poster = targetPoster;
+                        bgVideo.src = targetSrc;
+                        bgVideo.play().catch(e => console.log("Autoplay bloqueado", e));
+                        bgVideo.style.opacity = '0.9';
+                    }, 300);
+                }
+            } else {
+                // Si ya es el correcto, solo lo hacemos visible
+                bgVideo.style.opacity = '0.9';
+            }
+        }
     }
 
-    applyTheme(savedTheme);
+    // Pasamos "true" para indicarle a la función que es la carga inicial de la página
+    applyTheme(savedTheme, true);
 
     function toggleTheme() {
         const currentTheme = htmlEl.classList.contains('dark') ? 'dark' : 'light';
-        applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+        // Pasamos "false" porque esto es una acción manual del usuario
+        applyTheme(currentTheme === 'dark' ? 'light' : 'dark', false);
     }
 
     if (themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
     if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
-});
