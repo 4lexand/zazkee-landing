@@ -1,27 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Active Drops | ZAZKEE</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Space Grotesk -->
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Tailwind Config -->
+    <!-- Tailwind Config con Dark Mode -->
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Space Grotesk', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'], },
                     colors: {
                         dark: '#0a0a0c',
                         darker: '#050505',
@@ -32,211 +26,157 @@
             }
         }
     </script>
-
-    <style>
-        body {
-            background-color: #050505;
-            color: #e2e8f0;
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(234, 179, 8, 0.03), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.02), transparent 25%);
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .glass-card:hover {
-            border-color: rgba(234, 179, 8, 0.4);
-            box-shadow: 0 10px 30px -10px rgba(234, 179, 8, 0.15);
-            transform: translateY(-5px);
-        }
-
-        /* Mobile Menu Transitions */
-        #mobile-menu {
-            transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
-        }
-        #mobile-menu.open {
-            max-height: 400px;
-            opacity: 1;
-        }
-
-        /* Modal Styles */
-        #code-modal {
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-            opacity: 0;
-            visibility: hidden;
-        }
-        
-        #code-modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            transform: scale(0.95) translateY(20px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        #code-modal.active .modal-content {
-            transform: scale(1) translateY(0);
-        }
-    </style>
+    <link rel="stylesheet" href="global.css">
 </head>
-<body class="antialiased selection:bg-brandGold selection:text-black">
+<body class="antialiased selection:bg-brandGold selection:text-black bg-gray-50 dark:bg-[#050505] transition-colors duration-500 overflow-x-hidden">
 
-    <!-- Interactive Particle Background -->
-    <canvas id="networkCanvas" class="fixed inset-0 pointer-events-auto z-0 opacity-50"></canvas>
+    <!-- FONDO DE VIDEO OPTIMIZADO PARA MÓVIL (Con Poster) -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <video id="bg-video" poster="poster-noche.jpg" class="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover opacity-90 transition-opacity duration-1000" autoplay loop muted playsinline preload="auto">
+            <source src="videoNo.mp4" type="video/mp4">
+        </video>
+        <div id="video-overlay" class="absolute inset-0 bg-black/50 dark:bg-black/60 transition-colors duration-500"></div>
+    </div>
 
-    <!-- Navigation (Responsive) -->
-    <nav id="navbar" class="fixed w-full z-50 top-0 transition-all duration-300 backdrop-blur-lg bg-darker/90 border-b border-white/5 py-2">
-        <div class="max-w-[1400px] mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="index.html" class="nav-link text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-widest text-white z-50 relative">ZAZK<span class="text-brandGold">EE</span></a>
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 top-0 transition-all duration-300 backdrop-blur-xl bg-white/80 dark:bg-darker/90 border-b border-gray-200 dark:border-white/10 py-1">
+        <div class="max-w-[1400px] mx-auto px-5 py-3 flex justify-between items-center">
+            <!-- Brand Logo -->
+            <a href="index.html" class="nav-link text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-widest text-gray-900 dark:text-white z-50 relative transition-colors">
+                ZAZK<span class="text-brandGold">EE</span>
+            </a>
             
             <!-- Desktop Menu -->
-            <div class="hidden md:flex items-center space-x-8 lg:space-x-12 text-sm lg:text-base font-medium text-gray-400">
-                <a href="index.html#about" class="nav-link hover:text-white hover:text-brandGold transition-colors">About</a>
-                <a href="index.html#partnerships" class="nav-link hover:text-white hover:text-brandGold transition-colors">Partnerships</a>
-                <a href="index.html#services" class="nav-link hover:text-white hover:text-brandGold transition-colors">What I Do</a>
-                
-                <a href="#" class="hover:text-white text-brandGold font-bold drop-shadow-[0_0_8px_rgba(234,179,8,0.5)] transition-colors">Active Drops</a>
-                
-                <a href="index.html#contact" class="nav-link px-6 py-2.5 border border-brandGold/30 hover:border-brandGold hover:bg-brandGold/10 text-white rounded-full transition-all font-semibold shadow-[0_0_15px_rgba(234,179,8,0.1)]">
+            <div class="hidden md:flex items-center space-x-8 lg:space-x-12 text-sm lg:text-base font-medium">
+                <a href="index.html#about" class="nav-link text-gray-600 dark:text-gray-400 hover:text-brandGold dark:hover:text-brandGold transition-colors">About</a>
+                <a href="index.html#partnerships" class="nav-link text-gray-600 dark:text-gray-400 hover:text-brandGold dark:hover:text-brandGold transition-colors">Partnerships</a>
+                <a href="index.html#services" class="nav-link text-gray-600 dark:text-gray-400 hover:text-brandGold dark:hover:text-brandGold transition-colors">What I Do</a>
+                <a href="#" class="text-brandGold font-bold drop-shadow-[0_0_8px_rgba(234,179,8,0.5)] transition-colors">Active Drops</a>
+                <a href="index.html#contact" class="nav-link px-6 py-2.5 border border-gray-300 dark:border-brandGold/30 text-gray-900 dark:text-white hover:border-brandGold dark:hover:border-brandGold rounded-full transition-all font-semibold shadow-sm">
                     Collab With Me
+                </a>
+                <button id="theme-toggle" class="text-gray-500 dark:text-gray-400 hover:text-brandGold dark:hover:text-brandGold transition-colors text-xl ml-4 focus:outline-none">
+                    <i class="fa-solid fa-moon" id="theme-icon"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Quick Actions Bar -->
+            <div class="md:hidden flex items-center gap-2.5 z-50 relative">
+                <!-- Switch Luz / Noche -->
+                <button id="theme-toggle-mobile" class="w-9 h-9 rounded-full bg-gray-200/60 dark:bg-white/5 border border-gray-300 dark:border-white/10 flex items-center justify-center text-gray-800 dark:text-gray-200 text-sm focus:outline-none">
+                    <i class="fa-solid fa-moon" id="theme-icon-mobile"></i>
+                </button>
+
+                <!-- Botón Hamburguesa Estilizado -->
+                <button id="mobile-menu-button" class="w-9 h-9 rounded-full bg-gray-200/60 dark:bg-white/5 border border-gray-300 dark:border-white/10 flex items-center justify-center text-gray-900 dark:text-white text-base focus:outline-none">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Rediseñado -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white/95 dark:bg-[#070709]/95 backdrop-blur-2xl border-b border-gray-200 dark:border-white/10 absolute w-full left-0 top-full px-6 py-6 transition-all duration-300 z-40">
+            <div class="flex flex-col space-y-2">
+                <a href="index.html#about" class="nav-link mobile-link flex items-center justify-between p-3.5 rounded-xl bg-gray-100/70 dark:bg-white/[0.03] border border-gray-200/80 dark:border-white/5 text-gray-800 dark:text-gray-200 font-semibold text-sm hover:border-brandGold/40 transition-all">
+                    <span class="flex items-center gap-3">
+                        <i class="fa-solid fa-fingerprint text-brandGold w-4 text-center"></i> About ZAZKEE
+                    </span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                </a>
+
+                <a href="index.html#partnerships" class="nav-link mobile-link flex items-center justify-between p-3.5 rounded-xl bg-gray-100/70 dark:bg-white/[0.03] border border-gray-200/80 dark:border-white/5 text-gray-800 dark:text-gray-200 font-semibold text-sm hover:border-brandGold/40 transition-all">
+                    <span class="flex items-center gap-3">
+                        <i class="fa-solid fa-handshake-simple text-brandGold w-4 text-center"></i> Partnerships
+                    </span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                </a>
+
+                <a href="index.html#services" class="nav-link mobile-link flex items-center justify-between p-3.5 rounded-xl bg-gray-100/70 dark:bg-white/[0.03] border border-gray-200/80 dark:border-white/5 text-gray-800 dark:text-gray-200 font-semibold text-sm hover:border-brandGold/40 transition-all">
+                    <span class="flex items-center gap-3">
+                        <i class="fa-solid fa-bolt text-brandGold w-4 text-center"></i> What I Do
+                    </span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                </a>
+
+                <a href="#" class="mobile-link flex items-center justify-between p-3.5 rounded-xl bg-brandGold/10 border border-brandGold/30 text-brandGold font-bold text-sm shadow-[0_0_15px_rgba(234,179,8,0.15)] transition-all">
+                    <span class="flex items-center gap-3">
+                        <i class="fa-solid fa-gift text-brandGold w-4 text-center"></i> Active Drops
+                    </span>
+                    <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-brandGold text-black font-extrabold">Live</span>
                 </a>
             </div>
 
-            <!-- Mobile Menu Toggle -->
-            <button id="mobile-menu-button" class="md:hidden text-white text-2xl z-50 relative focus:outline-none">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-        </div>
+            <!-- Botón Collab -->
+            <a href="index.html#contact" class="nav-link mobile-link mt-5 w-full py-3.5 bg-brandGold text-black font-bold text-center text-sm rounded-xl tracking-wider uppercase shadow-[0_0_20px_rgba(234,179,8,0.3)] flex items-center justify-center gap-2">
+                <i class="fa-solid fa-comments"></i> Collab With Me
+            </a>
 
-        <!-- Mobile Dropdown -->
-        <div id="mobile-menu" class="md:hidden bg-darker/95 backdrop-blur-xl border-b border-white/10 absolute w-full left-0 top-full flex flex-col items-center py-6 space-y-6 text-gray-300 font-medium">
-            <a href="index.html#about" class="nav-link mobile-link hover:text-brandGold transition-colors text-lg">About</a>
-            <a href="index.html#partnerships" class="nav-link mobile-link hover:text-brandGold transition-colors text-lg">Partnerships</a>
-            <a href="index.html#services" class="nav-link mobile-link hover:text-brandGold transition-colors text-lg">What I Do</a>
-            
-            <a href="#" class="mobile-link text-brandGold font-bold transition-colors text-lg">Active Drops</a>
-            
-            <a href="index.html#contact" class="nav-link mobile-link mt-4 px-8 py-3 bg-brandGold text-black font-bold rounded-full transition-all">Collab With Me</a>
+            <!-- Redes en Móvil al Pie del Menú -->
+            <div class="mt-6 pt-5 border-t border-gray-200 dark:border-white/10 flex items-center justify-center gap-6">
+                <a href="https://twitter.com/zazzkeee" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-700 dark:text-gray-300 hover:text-brandGold">
+                    <i class="fa-brands fa-x-twitter text-sm"></i>
+                </a>
+                <a href="https://t.me/zazkestribe" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-700 dark:text-gray-300 hover:text-brandGold">
+                    <i class="fa-brands fa-telegram text-base"></i>
+                </a>
+            </div>
         </div>
     </nav>
 
-    <!-- Giveaways Dashboard -->
-    <section class="relative min-h-screen pt-32 pb-24 z-10 flex flex-col items-center">
-        <div class="max-w-5xl mx-auto px-6 w-full">
+    <!-- Header Section -->
+    <header class="relative pt-32 pb-16 lg:pt-40 lg:pb-24 z-10 text-center px-6 reveal">
+        <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-white mb-4 tracking-tight">Active <span class="text-brandGold">Drops</span></h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Exclusive opportunities, massive giveaways, and rewards for the real Web3 community. No gatekeeping.</p>
+    </header>
+
+    <!-- Active Drops Grid -->
+    <section class="relative z-10 max-w-[1400px] mx-auto px-6 pb-32">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             
-            <!-- Header -->
-            <div class="text-center mb-16">
-                <span class="inline-block py-1 px-3 rounded-full bg-brandGold/10 border border-brandGold/30 text-brandGold text-xs font-bold tracking-widest uppercase mb-4 shadow-[0_0_15px_rgba(234,179,8,0.2)]">
-                    <i class="fa-solid fa-circle-dot text-[10px] mr-2 animate-pulse"></i> Live System
-                </span>
-                <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">Active <span class="text-transparent bg-clip-text bg-gradient-to-r from-brandGold to-yellow-200">Missions</span></h1>
-                <p class="text-gray-400 text-lg max-w-2xl mx-auto">Complete tasks, unlock exclusive partner codes, and secure your rewards directly on the Solana network.</p>
-            </div>
-
-            <!-- Missions Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Tarjeta Drop 1 -->
+            <div class="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-brandGold/30 rounded-3xl p-8 relative overflow-hidden group hover:border-brandGold transition-all duration-300 reveal delay-100 shadow-[0_0_30px_rgba(234,179,8,0.05)]">
+                <div class="absolute top-6 right-6 px-3 py-1 bg-brandGold/20 border border-brandGold/50 text-brandGold text-xs font-bold uppercase rounded-full tracking-wider animate-pulse">
+                    Live
+                </div>
                 
-                <!-- Card 1: Standard X (Twitter) Task -->
-                <div class="glass-card rounded-3xl p-8 flex flex-col relative overflow-hidden group border-brandGold/20">
-                    <div class="absolute top-0 right-0 bg-green-500/20 text-green-400 text-xs font-bold px-4 py-1.5 rounded-bl-xl border-l border-b border-green-500/30">
-                        ACTIVE
-                    </div>
-                    
-                    <div class="flex items-center gap-4 mb-6">
-                        <div class="w-14 h-14 rounded-full bg-[#1da1f2]/10 border border-[#1da1f2]/30 flex items-center justify-center text-white text-2xl">
-                            <i class="fa-brands fa-x-twitter"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-2xl font-bold text-white">$100 Solana Drop</h3>
-                            <p class="text-sm text-brandGold font-mono">Ends in: 48h 12m</p>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-8 flex-grow">
-                        <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Requirements:</h4>
-                        <ul class="space-y-3 text-sm text-gray-400">
-                            <li class="flex items-center gap-3"><div class="w-5 h-5 rounded-full border border-gray-600 flex items-center justify-center text-[10px]">1</div> Follow @zazzkeee & @MrurdanetaK</li>
-                            <li class="flex items-center gap-3"><div class="w-5 h-5 rounded-full border border-gray-600 flex items-center justify-center text-[10px]">2</div> Like & Repost the pinned tweet</li>
-                            <li class="flex items-center gap-3"><div class="w-5 h-5 rounded-full border border-gray-600 flex items-center justify-center text-[10px]">3</div> Tag a friend in comments</li>
-                        </ul>
-                    </div>
-
-                    <!-- Connect Wallet / Verify Button -->
-                    <button class="w-full py-4 bg-white/5 hover:bg-[#1da1f2]/20 border border-[#1da1f2]/50 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-3 group-hover:shadow-[0_0_20px_rgba(29,161,242,0.2)]">
-                        Verify X Account <i class="fa-solid fa-arrow-right"></i>
-                    </button>
+                <div class="w-16 h-16 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-3xl mb-6">
+                    💰
                 </div>
-
-                <!-- Card 2: Secret Code Vault -->
-                <div class="glass-card rounded-3xl p-8 flex flex-col relative overflow-hidden group border-brandGold/40 shadow-[0_0_30px_rgba(234,179,8,0.1)]">
-                    <div class="absolute top-0 right-0 bg-brandGold/20 text-brandGold text-xs font-bold px-4 py-1.5 rounded-bl-xl border-l border-b border-brandGold/40">
-                        VIP COLLAB
-                    </div>
-                    
-                    <div class="flex items-center gap-4 mb-6">
-                        <img src="fortunejackpot.jpg" alt="FortuneJack" class="w-14 h-14 rounded-full border border-brandGold/50 object-cover">
-                        <div>
-                            <h3 class="text-2xl font-bold text-white">FortuneJack Bonus</h3>
-                            <p class="text-sm text-brandGold font-mono">Exclusive Pool</p>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-8 flex-grow">
-                        <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">How to enter:</h4>
-                        <p class="text-gray-400 text-sm leading-relaxed">
-                            Watch the latest stream or check the recent post to find the hidden VIP code. Unlock the vault to access the direct partner link and secure your slot.
-                        </p>
-                    </div>
-
-                    <!-- Open Modal Button -->
-                    <button onclick="openModal()" class="w-full py-4 bg-brandGold hover:bg-brandDarkGold text-black font-extrabold rounded-xl transition-all flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:scale-[1.02]">
-                        <i class="fa-solid fa-lock"></i> Enter Secret Code
-                    </button>
-                </div>
-
+                
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">$100 SOL Giveaway</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-8">Join the Tribe and participate in our weekly $SOL drop. Requirements are simple: be active and support the ecosystem.</p>
+                
+                <a href="#" class="w-full block text-center px-6 py-4 bg-gray-900 dark:bg-white/10 hover:bg-brandGold text-white hover:text-black font-bold rounded-xl transition-colors border border-transparent dark:border-white/10 hover:border-brandGold">
+                    Participate on X
+                </a>
             </div>
+
+            <!-- Tarjeta Drop 2 -->
+            <div class="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/5 rounded-3xl p-8 relative overflow-hidden group hover:border-brandGold/50 transition-all duration-300 reveal delay-200">
+                <div class="w-16 h-16 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-3xl mb-6">
+                    🎮
+                </div>
+                
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">FortuneJack VIP Slots</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-8">Exclusive VIP registration slots for my community. Instant payouts and special sign-up bonuses just for the Tribe.</p>
+                
+                <a href="#" class="w-full block text-center px-6 py-4 bg-gray-900 dark:bg-white/10 hover:bg-brandGold text-white hover:text-black font-bold rounded-xl transition-colors border border-transparent dark:border-white/10 hover:border-brandGold">
+                    Claim Slot
+                </a>
+            </div>
+
         </div>
     </section>
 
-    <!-- THE VAULT MODAL (Dark Glassmorphism) -->
-    <div id="code-modal" class="fixed inset-0 z-[100] flex items-center justify-center px-4">
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-md" onclick="closeModal()"></div>
-        
-        <!-- Modal Box -->
-        <div class="modal-content relative bg-[#0a0a0c] border border-brandGold/30 rounded-3xl p-8 max-w-md w-full shadow-[0_0_50px_rgba(234,179,8,0.15)] text-center">
-            
-            <button onclick="closeModal()" class="absolute top-4 right-5 text-gray-500 hover:text-white transition-colors text-xl">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            
-            <div class="w-16 h-16 rounded-full bg-brandGold/10 border border-brandGold/30 text-brandGold flex items-center justify-center text-3xl mx-auto mb-6">
-                <i class="fa-solid fa-key"></i>
-            </div>
-            
-            <h3 class="text-2xl font-bold text-white mb-2">Unlock Mission</h3>
-            <p class="text-sm text-gray-400 mb-8">Enter the secret code shared during the livestream or on X.</p>
-            
-            <input type="text" placeholder="ENTER CODE..." class="w-full bg-white/5 border border-white/10 rounded-xl px-6 py-4 text-white text-center font-mono font-bold tracking-widest uppercase focus:outline-none focus:border-brandGold focus:ring-1 focus:ring-brandGold transition-all mb-6">
-            
-            <button class="w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-brandGold transition-colors shadow-lg">
-                Verify Code
-            </button>
+    <!-- Footer Simple -->
+    <footer class="relative overflow-hidden bg-gray-100 dark:bg-[#020202] border-t border-gray-300 dark:border-white/5 py-12 z-10 transition-colors">
+        <div class="max-w-[1400px] mx-auto px-6 text-center">
+            <p class="text-sm text-gray-500 font-medium">&copy; 2026 ZAZKEE. All rights reserved.</p>
         </div>
-    </div>
+    </footer>
 
     <!-- Scripts -->
-    <script src="js/giveaways.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

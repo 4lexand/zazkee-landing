@@ -1,20 +1,21 @@
-document.addEventListener("DOMContentLoaded", () => {
-    // Elementos del DOM
+// FORZAR DESBLOQUEO MAESTRO DEL SCROLL POR SI ACASO (Anti-candado)
 document.documentElement.style.setProperty('overflow-y', 'auto', 'important');
 document.documentElement.style.setProperty('height', 'auto', 'important');
 document.body.style.setProperty('overflow-y', 'auto', 'important');
-document.body.style.setProperty('height', 'auto', 'important');    
+document.body.style.setProperty('height', 'auto', 'important');
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Elementos del DOM
     const preloader = document.getElementById('preloader');
     const enterBtn = document.getElementById('enter-btn');
     const loaderCounter = document.getElementById('loader-counter');
     const loadingTextFill = document.getElementById('loading-text-fill');
     const loaderStatus = document.getElementById('loader-status'); 
 
-    // 1. BYPASS DEL PRELOADER (Si el usuario recarga la página)
+    // 1. BYPASS DEL PRELOADER (Si el usuario ya entró antes)
     if (sessionStorage.getItem('zazkee_visited')) {
         if (preloader) preloader.style.display = 'none';
         
-        // GARANTÍA ABSOLUTA PARA DESBLOQUEAR EL SCROLL
         document.body.classList.remove('no-scroll');
         document.body.style.overflow = 'auto'; 
 
@@ -85,7 +86,7 @@ document.body.style.setProperty('height', 'auto', 'important');
                     duration: 1,
                     ease: "power4.inOut",
                     onComplete: () => {
-                        // DESBLOQUEO DE SCROLL
+                        // Asegurar el desbloqueo al terminar
                         document.body.classList.remove('no-scroll');
                         document.body.style.overflow = 'auto';
                         
@@ -104,41 +105,44 @@ document.body.style.setProperty('height', 'auto', 'important');
         }
     }
 
-// 3. MENÚ MÓVIL
-const menuBtn = document.getElementById('mobile-menu-button');
-const mobileMenu = document.getElementById('mobile-menu');
-
-if(menuBtn && mobileMenu) {
-    const icon = menuBtn.querySelector('i');
+    // 3. MENÚ MÓVIL (Lógica Oculta/Visible con Touch Outside)
+    const menuBtn = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
     
-    // Alternar menú al tocar las 3 barras
-    menuBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isClosed = mobileMenu.classList.toggle('hidden');
-        if (icon) {
-            icon.classList.toggle('fa-bars', isClosed);
-            icon.classList.toggle('fa-xmark', !isClosed);
-        }
-    });
-
-    // Cerrar menú si el usuario toca en cualquier otra parte de la pantalla
-    document.addEventListener('click', (e) => {
-        if (!mobileMenu.classList.contains('hidden') && !mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-            mobileMenu.classList.add('hidden');
+    if(menuBtn && mobileMenu) {
+        const icon = menuBtn.querySelector('i');
+        
+        // Alternar al tocar el botón
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isClosed = mobileMenu.classList.toggle('hidden');
             if (icon) {
-                icon.classList.add('fa-bars');
-                icon.classList.remove('fa-xmark');
+                icon.classList.toggle('fa-bars', isClosed);
+                icon.classList.toggle('fa-xmark', !isClosed);
             }
-        }
-    });
-}
+        });
 
-    // 4. SCROLL SUAVE Y TRANSICIONES (Navegación)
+        // Cerrar si se toca afuera del menú
+        document.addEventListener('click', (e) => {
+            if (!mobileMenu.classList.contains('hidden') && !mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+                mobileMenu.classList.add('hidden');
+                if (icon) {
+                    icon.classList.add('fa-bars');
+                    icon.classList.remove('fa-xmark');
+                }
+            }
+        });
+    }
+
+    // 4. SCROLL SUAVE Y TRANSICIONES ENTRE PÁGINAS
     document.querySelectorAll('a.nav-link, a.mobile-link').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             const targetId = this.getAttribute('href');
             
-            if (targetId && targetId.startsWith('#')) {
+            if (targetId && targetId.includes('#')) {
+                // Si es un ancla a otra página (ej. index.html#about), dejamos que el navegador lo maneje normal
+                if (targetId.includes('.html#')) return;
+
                 e.preventDefault();
                 if (targetId === '#') {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -148,16 +152,17 @@ if(menuBtn && mobileMenu) {
                         targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
                 }
-                // Cerrar menú móvil si está abierto al hacer clic en una sección
-            if(mobileMenu && !mobileMenu.classList.contains('hidden')) {
-                mobileMenu.classList.add('hidden');
-                const icon = menuBtn ? menuBtn.querySelector('i') : null;
-                if (icon) {
-                    icon.classList.add('fa-bars');
-                    icon.classList.remove('fa-xmark');
+                // Cerrar menú móvil al seleccionar opción
+                if(mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                    const icon = menuBtn ? menuBtn.querySelector('i') : null;
+                    if (icon) {
+                        icon.classList.add('fa-bars');
+                        icon.classList.remove('fa-xmark');
+                    }
                 }
-            }
             } else if (targetId && targetId.includes('.html')) {
+                // Transición fade hacia otra página
                 e.preventDefault();
                 document.body.style.transition = 'opacity 0.5s ease';
                 document.body.style.opacity = '0';
@@ -166,7 +171,7 @@ if(menuBtn && mobileMenu) {
         });
     });
 
-    // 5. ANIMACIONES AL HACER SCROLL (.reveal)
+    // 5. ANIMACIONES AL SCROLL (.reveal)
     const sections = document.querySelectorAll('.reveal');
     if (sections.length > 0) {
         const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
@@ -181,7 +186,7 @@ if(menuBtn && mobileMenu) {
         sections.forEach(sec => observer.observe(sec));
     }
 
-    // 6. LÓGICA DE MODO LUZ Y OSCURO (Video Backgrounds)
+    // 6. LÓGICA DE MODO LUZ Y OSCURO (Con Posters para carga móvil instantánea)
     const themeToggleBtn = document.getElementById('theme-toggle');
     const themeIcon = document.getElementById('theme-icon');
     const themeToggleMobile = document.getElementById('theme-toggle-mobile');
@@ -191,7 +196,6 @@ if(menuBtn && mobileMenu) {
     const videoOverlay = document.getElementById('video-overlay');
     const htmlEl = document.documentElement;
 
-    // Lee la preferencia guardada, si no hay asume "dark"
     const savedTheme = localStorage.getItem('zazkee_theme') || 'dark';
 
     function applyTheme(theme) {
@@ -203,6 +207,7 @@ if(menuBtn && mobileMenu) {
             if (bgVideo) {
                 bgVideo.style.opacity = '0';
                 setTimeout(() => {
+                    bgVideo.poster = 'poster-luz.jpg'; // Imagen para móviles (Día)
                     bgVideo.src = 'videoLuz.mp4';
                     bgVideo.play().catch(e => console.log("Autoplay bloqueado", e));
                     bgVideo.style.opacity = '0.9';
@@ -221,6 +226,7 @@ if(menuBtn && mobileMenu) {
             if (bgVideo) {
                 bgVideo.style.opacity = '0';
                 setTimeout(() => {
+                    bgVideo.poster = 'poster-noche.jpg'; // Imagen para móviles (Noche)
                     bgVideo.src = 'videoNo.mp4';
                     bgVideo.play().catch(e => console.log("Autoplay bloqueado", e));
                     bgVideo.style.opacity = '0.9';
@@ -234,7 +240,6 @@ if(menuBtn && mobileMenu) {
         }
     }
 
-    // Aplica el tema inmediatamente
     applyTheme(savedTheme);
 
     function toggleTheme() {

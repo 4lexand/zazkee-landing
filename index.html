@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Tailwind Config con Dark Mode -->
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -27,17 +28,19 @@
     </script>
     <link rel="stylesheet" href="global.css">
 </head>
-<body class="antialiased selection:bg-brandGold selection:text-black bg-gray-50 dark:bg-[#050505] transition-colors duration-500">
+<body class="antialiased selection:bg-brandGold selection:text-black bg-gray-50 dark:bg-[#050505] transition-colors duration-500 overflow-x-hidden">
     
     <audio id="introSound" src="sound.mp3" preload="auto"></audio>
 
+    <!-- FONDO DE VIDEO OPTIMIZADO PARA MÓVIL (Con Poster) -->
     <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
-        <video id="bg-video" class="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover opacity-90 transition-opacity duration-1000" autoplay loop muted playsinline>
+        <video id="bg-video" poster="poster-noche.jpg" class="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover opacity-90 transition-opacity duration-1000" autoplay loop muted playsinline preload="auto">
             <source src="videoNo.mp4" type="video/mp4">
         </video>
         <div id="video-overlay" class="absolute inset-0 bg-black/50 dark:bg-black/60 transition-colors duration-500"></div>
     </div>
 
+    <!-- PRELOADER -->
     <div id="preloader" class="bg-[#030303] z-[99999] fixed inset-0 flex flex-col justify-center items-center">
         <div class="loader-content flex flex-col items-center justify-center text-center relative z-10 w-full px-4">
             <p class="text-brandGold/70 font-mono text-xs md:text-sm uppercase tracking-[0.4em] mb-4 md:mb-6 h-4" id="loader-status">CONNECTING WALLET...</p>
@@ -54,12 +57,15 @@
         </div>
     </div>
 
- <nav id="navbar" class="fixed w-full z-50 top-0 transition-all duration-300 backdrop-blur-xl bg-white/80 dark:bg-darker/90 border-b border-gray-200 dark:border-white/10 py-1">
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 top-0 transition-all duration-300 backdrop-blur-xl bg-white/80 dark:bg-darker/90 border-b border-gray-200 dark:border-white/10 py-1">
         <div class="max-w-[1400px] mx-auto px-5 py-3 flex justify-between items-center">
+            <!-- Brand Logo -->
             <a href="#" class="nav-link text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-widest text-gray-900 dark:text-white z-50 relative transition-colors">
                 ZAZK<span class="text-brandGold">EE</span>
             </a>
             
+            <!-- Desktop Menu -->
             <div class="hidden md:flex items-center space-x-8 lg:space-x-12 text-sm lg:text-base font-medium">
                 <a href="#about" class="nav-link text-gray-600 dark:text-gray-400 hover:text-brandGold dark:hover:text-brandGold transition-colors">About</a>
                 <a href="#partnerships" class="nav-link text-gray-600 dark:text-gray-400 hover:text-brandGold dark:hover:text-brandGold transition-colors">Partnerships</a>
@@ -73,23 +79,28 @@
                 </button>
             </div>
 
+            <!-- Mobile Quick Actions Bar (Antes de desplegar menú) -->
             <div class="md:hidden flex items-center gap-2.5 z-50 relative">
+                <!-- Píldora directa a Drops -->
                 <a href="giveaways.html" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brandGold/15 border border-brandGold/40 text-brandGold text-xs font-bold uppercase tracking-wider shadow-[0_0_12px_rgba(234,179,8,0.25)]">
                     <span class="w-2 h-2 rounded-full bg-brandGold animate-pulse"></span>
                     Drops
                 </a>
 
+                <!-- Switch Luz / Noche -->
                 <button id="theme-toggle-mobile" class="w-9 h-9 rounded-full bg-gray-200/60 dark:bg-white/5 border border-gray-300 dark:border-white/10 flex items-center justify-center text-gray-800 dark:text-gray-200 text-sm focus:outline-none">
                     <i class="fa-solid fa-moon" id="theme-icon-mobile"></i>
                 </button>
 
+                <!-- Botón Hamburguesa Estilizado -->
                 <button id="mobile-menu-button" class="w-9 h-9 rounded-full bg-gray-200/60 dark:bg-white/5 border border-gray-300 dark:border-white/10 flex items-center justify-center text-gray-900 dark:text-white text-base focus:outline-none">
                     <i class="fa-solid fa-bars"></i>
                 </button>
             </div>
         </div>
 
-        <div id="mobile-menu" class="hidden md:hidden bg-white/95 dark:bg-[#070709]/95 backdrop-blur-2xl border-b border-gray-200 dark:border-white/10 absolute w-full left-0 top-full px-6 py-6 transition-all duration-300">
+        <!-- Mobile Drawer Rediseñado (Glassmorphism & Tarjetas) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white/95 dark:bg-[#070709]/95 backdrop-blur-2xl border-b border-gray-200 dark:border-white/10 absolute w-full left-0 top-full px-6 py-6 transition-all duration-300 z-40">
             <div class="flex flex-col space-y-2">
                 <a href="#about" class="nav-link mobile-link flex items-center justify-between p-3.5 rounded-xl bg-gray-100/70 dark:bg-white/[0.03] border border-gray-200/80 dark:border-white/5 text-gray-800 dark:text-gray-200 font-semibold text-sm hover:border-brandGold/40 transition-all">
                     <span class="flex items-center gap-3">
@@ -120,10 +131,12 @@
                 </a>
             </div>
 
+            <!-- Botón Collab -->
             <a href="#contact" class="nav-link mobile-link mt-5 w-full py-3.5 bg-brandGold text-black font-bold text-center text-sm rounded-xl tracking-wider uppercase shadow-[0_0_20px_rgba(234,179,8,0.3)] flex items-center justify-center gap-2">
                 <i class="fa-solid fa-comments"></i> Collab With Me
             </a>
 
+            <!-- Redes en Móvil al Pie del Menú -->
             <div class="mt-6 pt-5 border-t border-gray-200 dark:border-white/10 flex items-center justify-center gap-6">
                 <a href="https://twitter.com/zazzkeee" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-700 dark:text-gray-300 hover:text-brandGold">
                     <i class="fa-brands fa-x-twitter text-sm"></i>
@@ -135,16 +148,21 @@
         </div>
     </nav>
 
+    <!-- Hero Section -->
     <section id="hero" class="relative min-h-screen flex items-center pt-24 pb-12 overflow-hidden">
         <div class="relative z-10 w-full max-w-[1400px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center pointer-events-none">
+            
             <div class="text-center lg:text-left order-2 lg:order-1 flex flex-col justify-center">
                 <p class="text-brandGold font-semibold tracking-[0.2em] text-xs md:text-sm mb-4 uppercase hero-element" id="hero-subtitle">Web3 Creator & Official Partner</p>
+                
                 <h1 class="text-5xl md:text-7xl lg:text-[5.5rem] leading-tight font-extrabold text-gray-900 dark:text-white mb-6 tracking-tight hero-element transition-colors" id="hero-title">
                     ZAZK<span class="text-transparent bg-clip-text bg-gradient-to-r from-brandGold to-yellow-200">EE</span>
                 </h1>
+                
                 <p class="text-base md:text-lg text-gray-700 dark:text-gray-400 max-w-xl mx-auto lg:mx-0 mb-10 hero-element transition-colors" id="hero-desc">
                     The bridge between platforms and people. Building real opportunities in the Web3 ecosystem with <span class="text-gray-900 dark:text-white font-semibold">zero gatekeeping</span>.
                 </p>
+                
                 <div class="flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-4 pointer-events-auto hero-element" id="hero-cta">
                     <a href="#contact" class="nav-link w-full sm:w-auto px-8 py-4 bg-brandGold hover:bg-brandDarkGold text-black font-bold rounded-full transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(234,179,8,0.3)]">
                         <i class="fa-solid fa-handshake"></i> Work with Me
@@ -154,6 +172,7 @@
                     </a>
                 </div>
             </div>
+
             <div class="flex justify-center lg:justify-end order-1 lg:order-2 pointer-events-auto hero-element" id="hero-img">
                 <div class="relative group mt-8 lg:mt-0 lg:mr-10">
                     <div class="relative w-56 h-56 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-full bg-gradient-to-br from-brandGold via-[#ca8a04]/40 to-transparent p-[3px] shadow-2xl">
@@ -171,6 +190,7 @@
         </div>
     </section>
 
+    <!-- Stats Banner -->
     <div class="relative z-10 border-y border-gray-200 dark:border-white/5 bg-white/40 dark:bg-black/40 backdrop-blur-sm reveal transition-colors">
         <div class="max-w-[1400px] mx-auto px-6 py-10">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 text-center">
@@ -194,6 +214,7 @@
         </div>
     </div>
 
+    <!-- About Section -->
     <section id="about" class="py-24 md:py-32 relative scroll-mt-20 overflow-hidden z-10">
         <div class="max-w-[1400px] mx-auto px-6 relative z-10 reveal">
             <div class="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/5 rounded-3xl p-8 md:p-12 lg:p-16 border-l-4 border-l-brandGold flex flex-col lg:flex-row gap-12 lg:gap-20 items-center transition-colors">
@@ -227,6 +248,7 @@
         </div>
     </section>
 
+    <!-- Partnerships Section -->
     <section id="partnerships" class="py-24 md:py-32 relative bg-white/40 dark:bg-darker/60 backdrop-blur-md scroll-mt-20 z-10 transition-colors">
         <div class="max-w-[1400px] mx-auto px-6">
             <div class="text-center mb-16 reveal">
@@ -264,6 +286,7 @@
         </div>
     </section>
 
+    <!-- What I Do Section -->
     <section id="services" class="py-24 md:py-32 relative bg-white/80 dark:bg-[#0a0a0c]/80 backdrop-blur-md border-y border-gray-200 dark:border-white/5 scroll-mt-20 z-10 transition-colors">
         <div class="max-w-[1400px] mx-auto px-6">
             <div class="text-center mb-16 reveal">
@@ -335,6 +358,7 @@
         </div>
     </section>
 
+    <!-- Proof Section -->
     <section id="proof" class="py-24 md:py-32 relative scroll-mt-20 z-10">
         <div class="max-w-[1400px] mx-auto px-6 text-center">
             <h2 class="text-xs md:text-sm font-bold text-brandGold tracking-widest uppercase mb-2 reveal">Social Proof</h2>
@@ -360,6 +384,7 @@
         </div>
     </section>
 
+    <!-- Footer / Contact -->
     <footer id="contact" class="py-24 md:py-32 relative overflow-hidden bg-gray-100 dark:bg-[#020202] border-t border-gray-300 dark:border-white/5 scroll-mt-20 z-10 transition-colors">
         <div class="absolute inset-0 z-0 pointer-events-none">
             <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[90%] md:w-[80%] h-[300px] bg-brandGold/10 blur-[150px]"></div>
@@ -386,6 +411,7 @@
         </div>
     </footer>
 
+    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="js/app.js"></script>
 </body>
