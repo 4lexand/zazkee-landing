@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 1. LÓGICA DE CARGA INTELIGENTE (Detecta si hay preloader)
     if (preloader) {
-        // Estamos en index.html
         if (sessionStorage.getItem('zazkee_visited')) {
             preloader.style.display = 'none';
             document.body.style.opacity = '1';
@@ -73,7 +72,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     } else {
-        // Estamos en giveaways.html (No hay preloader, mostrar página directo)
         document.body.style.opacity = '1';
     }
 
@@ -105,7 +103,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const targetId = this.getAttribute('href');
             if (!targetId || targetId === '#') return;
 
-            // Evitar animaciones si es un enlace con # hacia la misma página
             if (targetId.startsWith('#')) {
                 e.preventDefault();
                 const targetElement = document.querySelector(targetId);
@@ -114,10 +111,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Transición a otra página html
             if (targetId.includes('.html')) {
                 const currentPath = window.location.pathname;
-                // Si el usuario hace clic en el logo pero ya está en esa página, no hacer nada
                 if (currentPath.includes(targetId)) return;
 
                 e.preventDefault();
@@ -192,71 +187,72 @@ document.addEventListener("DOMContentLoaded", () => {
             applyTheme(currentTheme === 'dark' ? 'light' : 'dark', false);
         });
     });
-});
 
-// =========================================================
-    // 6. BACKEND: INTEGRACIÓN CON SUPABASE & LOGIN DE X
+    // =========================================================
+    // 6. BACKEND: INTEGRACIÓN CON SUPABASE & LOGIN DE X (SEGURO)
     // =========================================================
     
-    // REEMPLAZA ESTAS DOS LÍNEAS CON TUS DATOS DE SUPABASE
-    const supabaseUrl = 'https://yhggkrhppvimfikiylbp.supabase.co/rest/v1/';
-    const supabaseKey = 'sb_publishable_705SiIydShE9qdE1mVZIRg_Hb4g9bIA';
-    
-    // Inicializamos Supabase
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    // El código solo se ejecuta si el script de Supabase se cargó correctamente
+    if (typeof window.supabase !== 'undefined') {
+        
+        const supabaseUrl = 'https://yhggkrhppvimfikiylbp.supabase.co/rest/v1/'; // <-- PON TU URL AQUÍ
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloZ2drcmhwcHZpbWZpa2l5bGJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0ODAwNjcsImV4cCI6MjEwNzA1NjA2N30.fmj-5oeYlFNcg7hKeGpDzjAOpmV4AP6p7GiH0OirZls'; // <-- PON TU KEY AQUÍ
+        
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    const loginBtnDesktop = document.getElementById('btn-login-x-desktop');
-    const loginBtnMobile = document.getElementById('btn-login-x-mobile');
+        const loginBtnDesktop = document.getElementById('btn-login-x-desktop');
+        const loginBtnMobile = document.getElementById('btn-login-x-mobile');
 
-    // Función para Iniciar Sesión
-    async function signInWithTwitter() {
-        const { data, error } = await supabase.auth.signInWithOAuth({
-            provider: 'twitter',
-        });
-        if (error) console.error("Error al iniciar sesión:", error.message);
-    }
-
-    // Función para actualizar la Interfaz (UI)
-    function updateLoginUI(session) {
-        if (session) {
-            // El usuario está logueado: Mostramos su @usuario de X
-            const username = session.user.user_metadata.user_name || session.user.user_metadata.preferred_username || 'Tribe Member';
+        async function signInWithTwitter() {
+            // Mostrar estado de carga para que el usuario sepa que está funcionando
+            if (loginBtnDesktop) loginBtnDesktop.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
+            if (loginBtnMobile) loginBtnMobile.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
             
-            const loggedInHTML = `<i class="fa-brands fa-x-twitter"></i> @${username}`;
-            
-            if (loginBtnDesktop) {
-                loginBtnDesktop.innerHTML = loggedInHTML;
-                loginBtnDesktop.classList.add('bg-brandGold', 'text-black');
-                loginBtnDesktop.classList.remove('bg-black', 'text-white', 'dark:bg-white', 'dark:text-black');
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: 'twitter',
+            });
+            if (error) {
+                console.error("Error al iniciar sesión:", error.message);
+                alert("Hubo un error al conectar con X. Verifica la consola.");
             }
-            if (loginBtnMobile) {
-                loginBtnMobile.innerHTML = loggedInHTML;
-                loginBtnMobile.classList.add('bg-brandGold', 'text-black');
-                loginBtnMobile.classList.remove('bg-black', 'text-white', 'dark:bg-white', 'dark:text-black');
-            }
-        } else {
-            // No logueado: Mostramos "Connect X"
-            const loggedOutHTML = `<i class="fa-brands fa-x-twitter"></i> Connect X`;
-            if (loginBtnDesktop) loginBtnDesktop.innerHTML = loggedOutHTML;
-            if (loginBtnMobile) loginBtnMobile.innerHTML = loggedOutHTML;
         }
-    }
 
-    // Verificar si el usuario ya inició sesión previamente al cargar la página
-    async function checkUserSession() {
-        // Chequeo inicial
-        const { data: { session } } = await supabase.auth.getSession();
-        updateLoginUI(session);
+        function updateLoginUI(session) {
+            if (session) {
+                const username = session.user.user_metadata.user_name || session.user.user_metadata.preferred_username || 'Tribe Member';
+                const loggedInHTML = `<i class="fa-brands fa-x-twitter"></i> @${username}`;
+                
+                if (loginBtnDesktop) {
+                    loginBtnDesktop.innerHTML = loggedInHTML;
+                    loginBtnDesktop.classList.add('bg-brandGold', 'text-black');
+                    loginBtnDesktop.classList.remove('bg-black', 'text-white', 'dark:bg-white', 'dark:text-black');
+                }
+                if (loginBtnMobile) {
+                    loginBtnMobile.innerHTML = loggedInHTML;
+                    loginBtnMobile.classList.add('bg-brandGold', 'text-black');
+                    loginBtnMobile.classList.remove('bg-black', 'text-white', 'dark:bg-white', 'dark:text-black');
+                }
+            } else {
+                const loggedOutHTML = `<i class="fa-brands fa-x-twitter"></i> Connect X`;
+                if (loginBtnDesktop) loginBtnDesktop.innerHTML = loggedOutHTML;
+                if (loginBtnMobile) loginBtnMobile.innerHTML = loggedOutHTML;
+            }
+        }
 
-        // Escuchar si la sesión cambia (por ejemplo, cuando regresa de autorizar en X)
-        supabase.auth.onAuthStateChange((_event, session) => {
+        async function checkUserSession() {
+            const { data: { session } } = await supabase.auth.getSession();
             updateLoginUI(session);
-        });
+
+            supabase.auth.onAuthStateChange((_event, session) => {
+                updateLoginUI(session);
+            });
+        }
+
+        if (loginBtnDesktop) loginBtnDesktop.addEventListener('click', signInWithTwitter);
+        if (loginBtnMobile) loginBtnMobile.addEventListener('click', signInWithTwitter);
+
+        checkUserSession();
+    } else {
+        console.warn("Supabase no está cargado en esta página. Las funciones Web3 están en pausa.");
     }
-
-    // Asignar los clics a los botones
-    if (loginBtnDesktop) loginBtnDesktop.addEventListener('click', signInWithTwitter);
-    if (loginBtnMobile) loginBtnMobile.addEventListener('click', signInWithTwitter);
-
-    // Arrancar la verificación
-    checkUserSession();
+});
