@@ -104,20 +104,34 @@ document.body.style.setProperty('height', 'auto', 'important');
         }
     }
 
-    // 3. MENÚ MÓVIL
-    const menuBtn = document.getElementById('mobile-menu-button');
-    const mobileMenu = document.getElementById('mobile-menu');
+// 3. MENÚ MÓVIL
+const menuBtn = document.getElementById('mobile-menu-button');
+const mobileMenu = document.getElementById('mobile-menu');
+
+if(menuBtn && mobileMenu) {
+    const icon = menuBtn.querySelector('i');
     
-    if(menuBtn && mobileMenu) {
-        const icon = menuBtn.querySelector('i');
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('open');
+    // Alternar menú al tocar las 3 barras
+    menuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isClosed = mobileMenu.classList.toggle('hidden');
+        if (icon) {
+            icon.classList.toggle('fa-bars', isClosed);
+            icon.classList.toggle('fa-xmark', !isClosed);
+        }
+    });
+
+    // Cerrar menú si el usuario toca en cualquier otra parte de la pantalla
+    document.addEventListener('click', (e) => {
+        if (!mobileMenu.classList.contains('hidden') && !mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+            mobileMenu.classList.add('hidden');
             if (icon) {
-                icon.classList.toggle('fa-bars');
-                icon.classList.toggle('fa-xmark');
+                icon.classList.add('fa-bars');
+                icon.classList.remove('fa-xmark');
             }
-        });
-    }
+        }
+    });
+}
 
     // 4. SCROLL SUAVE Y TRANSICIONES (Navegación)
     document.querySelectorAll('a.nav-link, a.mobile-link').forEach(anchor => {
@@ -134,14 +148,15 @@ document.body.style.setProperty('height', 'auto', 'important');
                         targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
                 }
-                if(mobileMenu && mobileMenu.classList.contains('open')) {
-                    mobileMenu.classList.remove('open');
-                    const icon = menuBtn.querySelector('i');
-                    if (icon) {
-                        icon.classList.add('fa-bars');
-                        icon.classList.remove('fa-xmark');
-                    }
+                // Cerrar menú móvil si está abierto al hacer clic en una sección
+            if(mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                const icon = menuBtn ? menuBtn.querySelector('i') : null;
+                if (icon) {
+                    icon.classList.add('fa-bars');
+                    icon.classList.remove('fa-xmark');
                 }
+            }
             } else if (targetId && targetId.includes('.html')) {
                 e.preventDefault();
                 document.body.style.transition = 'opacity 0.5s ease';
