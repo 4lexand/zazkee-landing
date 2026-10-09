@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const bgVideo = document.getElementById('bg-video');
     const videoOverlay = document.getElementById('video-overlay');
 
-    // 1. LÓGICA DE CARGA INTELIGENTE (Detecta si hay preloader)
+    // 1. LÓGICA DE CARGA INTELIGENTE
     if (preloader) {
         if (sessionStorage.getItem('zazkee_visited')) {
             preloader.style.display = 'none';
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.style.opacity = '1';
     }
 
-    // 2. MENÚ MÓVIL (Con corrección de choques)
+    // 2. MENÚ MÓVIL
     const menuBtn = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
     
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 3. NAVEGACIÓN ENTRE PÁGINAS Y SCROLL
+    // 3. NAVEGACIÓN ENTRE PÁGINAS
     document.querySelectorAll('a.nav-link, a.mobile-link').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             const targetId = this.getAttribute('href');
@@ -123,21 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // 4. ANIMACIONES REVEAL
-    const sections = document.querySelectorAll('.reveal');
-    if (sections.length > 0) {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
-        sections.forEach(sec => observer.observe(sec));
-    }
-
-    // 5. LÓGICA MODO LUZ/NOCHE SIN REINICIOS
+    // 4. MODO LUZ/NOCHE
     const htmlEl = document.documentElement;
     const savedTheme = localStorage.getItem('zazkee_theme') || 'dark';
 
@@ -189,151 +175,192 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // =========================================================
-    // 6. BACKEND: INTEGRACIÓN CON SUPABASE & LOGIN DE X (SEGURO)
+    // 5. BACKEND: INTEGRACIÓN CON SUPABASE (CARGA DINÁMICA DE DROPS)
     // =========================================================
     
-    // El código solo se ejecuta si el script de Supabase se cargó correctamente
     if (typeof window.supabase !== 'undefined') {
-        
         const supabaseUrl = "https://yhggkrhppvimfikiylbp.supabase.co"; 
         const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloZ2drcmhwcHZpbWZpa2l5bGJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0ODAwNjcsImV4cCI6MjEwNzA1NjA2N30.fmj-5oeYlFNcg7hKeGpDzjAOpmV4AP6p7GiH0OirZls"; 
-        
-        // 🚨 PRUEBA DEFINITIVA: DETECTOR DE LLAVES
-        if (!supabaseKey || supabaseKey.includes("TU_") || supabaseKey === "") {
-            alert("🚨 ALERTA: La variable supabaseKey está vacía, mal escrita, o tiene el texto de relleno.");
-        } else {
-            console.log("✅ Supabase configurado. Llave detectada. Primeros caracteres:", supabaseKey.substring(0, 15));
-        }
-
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         const loginBtnDesktop = document.getElementById('btn-login-x-desktop');
         const loginBtnMobile = document.getElementById('btn-login-x-mobile');
 
-        // Función de inicio de sesión con redirección a drops
-       async function signInWithX() {
+        async function signInWithX() {
             if (loginBtnDesktop) loginBtnDesktop.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
             if (loginBtnMobile) loginBtnMobile.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
             
-            const { data, error } = await supabase.auth.signInWithOAuth({
+            const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'x',
-                options: {
-                    redirectTo: 'https://zazkee-landing.vercel.app/giveaways.html' 
-                }
+                options: { redirectTo: window.location.origin + '/giveaways.html' }
             });
             
             if (error) {
-                console.error("Error al iniciar sesión:", error.message);
-                alert("Hubo un error al conectar con X. Revisa la consola.");
+                alert("Hubo un error al conectar con X.");
                 updateLoginUI(null); 
             }
         }
 
         function updateLoginUI(session) {
-            if (session) {
-                const username = session.user.user_metadata.user_name || session.user.user_metadata.preferred_username || 'Tribe Member';
-                
-                const loggedInHTML = `<i class="fa-brands fa-x-twitter"></i> @${username}`;
-                
-                if (loginBtnDesktop) {
-                    loginBtnDesktop.innerHTML = loggedInHTML;
-                    loginBtnDesktop.classList.add('bg-brandGold', 'text-black');
-                    loginBtnDesktop.classList.remove('bg-black', 'text-white', 'dark:bg-white', 'dark:text-black');
-                }
-                if (loginBtnMobile) {
-                    loginBtnMobile.innerHTML = loggedInHTML;
-                    loginBtnMobile.classList.add('bg-brandGold', 'text-black');
-                    loginBtnMobile.classList.remove('bg-black', 'text-white', 'dark:bg-white', 'dark:text-black');
-                }
-            } else {
-                const loggedOutHTML = `<i class="fa-brands fa-x-twitter"></i> Connect X`;
-                if (loginBtnDesktop) {
-                    loginBtnDesktop.innerHTML = loggedOutHTML;
-                    loginBtnDesktop.classList.remove('bg-brandGold', 'text-black');
-                    loginBtnDesktop.classList.add('bg-black', 'text-white', 'dark:bg-white', 'dark:text-black');
-                }
-                if (loginBtnMobile) {
-                    loginBtnMobile.innerHTML = loggedOutHTML;
-                    loginBtnMobile.classList.remove('bg-brandGold', 'text-black');
-                    loginBtnMobile.classList.add('bg-black', 'text-white', 'dark:bg-white', 'dark:text-black');
-                }
-            }
-        }
+            const loggedInHTML = session 
+                ? `<i class="fa-brands fa-x-twitter"></i> @${session.user.user_metadata.user_name || session.user.user_metadata.preferred_username || 'User'}` 
+                : `<i class="fa-brands fa-x-twitter"></i> Connect X`;
 
-        // --- VALIDADOR DE PARTICIPACIONES Y BLOQUEO DE DUPLICADOS ---
-        const btnParticipateSol = document.getElementById('btn-participate-sol');
-        
-        if (btnParticipateSol) {
-            btnParticipateSol.addEventListener('click', async function() {
-                // 1. OBTENER SESIÓN FRESCA DE SUPABASE (Evita el falso login en memoria local)
-                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-                
-                if (sessionError || !session || !session.provider_token) {
-                    alert("⚠️ Session expired or invalid. Please click 'Connect X' again to refresh.");
-                    updateLoginUI(null);
-                    return;
-                }
-
-                // Estado de carga visual
-                const originalText = this.innerHTML;
-                this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
-                this.style.pointerEvents = 'none';
-
-                try {
-                    // 2. Enviar el token y los datos al backend en Vercel
-                    const response = await fetch('/api/verify', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            provider_token: session.provider_token,
-                            username: session.user.user_metadata.user_name || session.user.user_metadata.preferred_username,
-                            user_id: session.user.id,
-                            twitter_id: session.user.user_metadata.provider_id,
-                            drop_id: 'drop_100_sol', 
-                            target_tweet: '2105483856820240766', 
-                            target_account: 'zazzkeee' 
-                        })
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok) {
-                        // Éxito: Participación nueva guardada
-                        this.innerHTML = '<i class="fa-solid fa-check"></i> Confirmed!';
-                        this.style.backgroundColor = '#22c55e'; // Verde
-                        this.style.color = 'white';
-                        this.style.borderColor = '#22c55e';
-                    } else if (data.error === 'already_entered') {
-                        // Bloqueo: El usuario ya estaba registrado en la BD
-                        this.innerHTML = '<i class="fa-solid fa-check-double"></i> Already Entered';
-                        this.style.backgroundColor = '#3b82f6'; // Azul
-                        this.style.color = 'white';
-                        this.style.borderColor = '#3b82f6';
+            [loginBtnDesktop, loginBtnMobile].forEach(btn => {
+                if(btn) {
+                    btn.innerHTML = loggedInHTML;
+                    if(session) {
+                        btn.classList.add('bg-brandGold', 'text-black');
+                        btn.classList.remove('bg-black', 'text-white', 'dark:bg-white', 'dark:text-black');
                     } else {
-                        // Error del backend
-                        alert("Error: " + data.error);
-                        this.innerHTML = originalText;
-                        this.style.pointerEvents = 'auto';
+                        btn.classList.remove('bg-brandGold', 'text-black');
+                        btn.classList.add('bg-black', 'text-white', 'dark:bg-white', 'dark:text-black');
                     }
-                } catch (error) {
-                    console.error("Network error:", error);
-                    alert("Connection error with verification server.");
-                    this.innerHTML = originalText;
-                    this.style.pointerEvents = 'auto';
                 }
             });
         }
-        
-        async function checkUserSession() {
-            const { data: { session }, error } = await supabase.auth.getSession();
-            
-            if (error) {
-                console.error("Error validando sesión:", error);
+
+        // --- CARGAR DROPS DINÁMICOS DESDE SUPABASE ---
+        async function loadDynamicDrops() {
+            const container = document.getElementById('dynamic-drops-container');
+            if (!container) return; // Si no estamos en la página de giveaways, salimos.
+
+            const { data: drops, error } = await supabase.from('drops').select('*').eq('status', 'active').order('created_at', { ascending: false });
+
+            if (error || !drops || drops.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400">
+                    <i class="fa-solid fa-ghost text-4xl mb-4 opacity-50"></i>
+                    <p>No active drops at the moment. Stay tuned to @zazzkeee on X!</p>
+                </div>`;
+                return;
             }
 
-            // VALIDACIÓN ESTRICTA: Si hay sesión pero X nos quitó el token, forzamos cierre
+            // Generar el HTML dependiendo del tipo de Drop e inyectar las imágenes locales
+            container.innerHTML = drops.map(drop => {
+                if (drop.drop_type === 'social') {
+                    return `
+                    <div class="bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-brandGold/50 transition-all relative group flex flex-col h-full">
+                        <div class="absolute top-4 right-4 bg-brandGold/20 text-brandGold text-xs px-3 py-1 rounded border border-brandGold/30 uppercase font-bold tracking-wider">Social Task</div>
+                        
+                        <!-- IMAGEN GIVEAWAY.PNG INTEGRADA -->
+                        <div class="w-16 h-16 mb-6">
+                            <img src="giveaway.png" alt="Giveaway Icon" class="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(234,179,8,0.4)] group-hover:scale-110 transition-transform duration-300">
+                        </div>
+
+                        <h3 class="text-2xl font-bold mb-3 text-white mt-4">${drop.title}</h3>
+                        <p class="text-sm text-gray-400 mb-8 flex-grow">Complete the social tasks on X to secure your entry in the smart contract.</p>
+                        
+                        <div class="space-y-4 mb-8 bg-black/40 p-4 rounded-xl border border-white/5">
+                            <div class="flex items-center text-sm text-gray-300"><i class="fa-solid fa-check-circle text-green-500 w-6"></i> Follow @zazzkeee</div>
+                            <div class="flex items-center text-sm text-gray-300"><i class="fa-solid fa-check-circle text-green-500 w-6"></i> Like, Repost & Comment</div>
+                        </div>
+                        
+                        <button class="btn-participate-dynamic w-full py-4 bg-brandGold text-black font-bold text-lg rounded-xl hover:bg-yellow-400 transition-all shadow-[0_0_15px_rgba(234,179,8,0.15)] group-hover:shadow-[0_0_20px_rgba(234,179,8,0.3)]" data-drop-id="${drop.id}">
+                            Verify & Participate
+                        </button>
+                    </div>`;
+                } else if (drop.drop_type === 'code') {
+                    return `
+                    <div class="bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-[#00ff88]/50 transition-all relative group flex flex-col h-full">
+                        <div class="absolute top-4 right-4 bg-[#00ff88]/20 text-[#00ff88] text-xs px-3 py-1 rounded border border-[#00ff88]/30 uppercase font-bold tracking-wider">Partner Code</div>
+                        
+                        <!-- IMAGEN CODE.PNG INTEGRADA -->
+                        <div class="w-16 h-16 mb-6">
+                            <img src="code.png" alt="Code Icon" class="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(0,255,136,0.4)] group-hover:scale-110 transition-transform duration-300">
+                        </div>
+
+                        <h3 class="text-2xl font-bold mb-3 text-white mt-4">${drop.title}</h3>
+                        <p class="text-sm text-gray-400 mb-8 flex-grow">Enter your secret partnership code to instantly claim this drop.</p>
+                        
+                        <input type="text" placeholder="Enter Secret Code..." class="w-full bg-black border border-white/20 rounded-xl p-4 text-white mb-4 outline-none focus:border-[#00ff88] transition-colors" id="code-${drop.id}">
+                        
+                        <button class="btn-claim-code w-full py-4 bg-white/10 text-white font-bold text-lg rounded-xl hover:bg-white/20 border border-white/20 transition-all" data-drop-id="${drop.id}">
+                            Claim Drop
+                        </button>
+                    </div>`;
+                }
+            }).join('');
+
+            // Conectar los botones recién creados
+            attachDynamicListeners();
+        }
+
+        // --- LÓGICA DE BOTONES PARA DROPS DINÁMICOS ---
+        function attachDynamicListeners() {
+            // Lógica para Drops Sociales (Verificación con Vercel API)
+            document.querySelectorAll('.btn-participate-dynamic').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const dropId = this.getAttribute('data-drop-id');
+                    
+                    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+                    if (sessionError || !session || !session.provider_token) {
+                        alert("⚠️ Session expired or invalid. Please click 'Connect X' on the top menu to refresh.");
+                        return;
+                    }
+
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
+                    this.style.pointerEvents = 'none';
+
+                    try {
+                        const response = await fetch('/api/verify', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                provider_token: session.provider_token,
+                                username: session.user.user_metadata.user_name || session.user.user_metadata.preferred_username,
+                                user_id: session.user.id,
+                                twitter_id: session.user.user_metadata.provider_id,
+                                drop_id: dropId, 
+                                target_tweet: '2105483856820240766', 
+                                target_account: 'zazzkeee' 
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok) {
+                            this.innerHTML = '<i class="fa-solid fa-check"></i> Confirmed!';
+                            this.classList.replace('bg-brandGold', 'bg-green-500');
+                            this.classList.replace('text-black', 'text-white');
+                        } else if (data.error === 'already_entered') {
+                            this.innerHTML = '<i class="fa-solid fa-check-double"></i> Already Entered';
+                            this.classList.replace('bg-brandGold', 'bg-blue-500');
+                            this.classList.replace('text-black', 'text-white');
+                        } else {
+                            alert("Error: " + data.error);
+                            this.innerHTML = originalText;
+                            this.style.pointerEvents = 'auto';
+                        }
+                    } catch (error) {
+                        console.error("Network error:", error);
+                        alert("Connection error with verification server.");
+                        this.innerHTML = originalText;
+                        this.style.pointerEvents = 'auto';
+                    }
+                });
+            });
+
+            // Lógica para Drops de Código
+            document.querySelectorAll('.btn-claim-code').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const dropId = this.getAttribute('data-drop-id');
+                    const inputVal = document.getElementById(`code-${dropId}`).value.trim();
+                    
+                    if (!inputVal) {
+                        alert("Please enter a code first.");
+                        return;
+                    }
+                    
+                    alert(`Checking code "${inputVal}" for drop ${dropId}... \n\n(Code validation system under maintenance)`);
+                });
+            });
+        }
+
+        async function checkUserSession() {
+            const { data: { session } } = await supabase.auth.getSession();
+            
             if (session && !session.provider_token) {
-                console.warn("Sesión detectada, pero el token de X expiró. Limpiando credenciales...");
                 await supabase.auth.signOut();
                 updateLoginUI(null);
             } else {
@@ -354,7 +381,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (loginBtnMobile) loginBtnMobile.addEventListener('click', signInWithX);
 
         checkUserSession();
-    } else {
-        console.warn("Supabase no está cargado en esta página. Las funciones Web3 están en pausa.");
+        loadDynamicDrops(); 
     }
 });

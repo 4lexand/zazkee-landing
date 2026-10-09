@@ -32,7 +32,7 @@
 </head>
 <body class="antialiased selection:bg-brandGold selection:text-black bg-gray-50 dark:bg-[#050505] transition-colors duration-500 overflow-x-hidden">
 
-    <!-- FONDO DE VIDEO OPTIMIZADO PARA MÓVIL (Con Poster y src directo para evitar parpadeos) -->
+    <!-- FONDO DE VIDEO OPTIMIZADO PARA MÓVIL -->
     <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
         <video id="bg-video" src="videoNo.mp4" poster="poster-noche.jpg" class="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover opacity-90 transition-opacity duration-1000" autoplay loop muted playsinline preload="auto"></video>
         <div id="video-overlay" class="absolute inset-0 bg-black/50 dark:bg-black/60 transition-colors duration-500"></div>
@@ -63,12 +63,9 @@
 
             <!-- Mobile Quick Actions Bar -->
             <div class="md:hidden flex items-center gap-2.5 z-50 relative">
-                <!-- Switch Luz / Noche -->
                 <button id="theme-toggle-mobile" class="w-9 h-9 rounded-full bg-gray-200/60 dark:bg-white/5 border border-gray-300 dark:border-white/10 flex items-center justify-center text-gray-800 dark:text-gray-200 text-sm focus:outline-none">
                     <i class="fa-solid fa-moon" id="theme-icon-mobile"></i>
                 </button>
-
-                <!-- Botón Hamburguesa Estilizado -->
                 <button id="mobile-menu-button" class="w-9 h-9 rounded-full bg-gray-200/60 dark:bg-white/5 border border-gray-300 dark:border-white/10 flex items-center justify-center text-gray-900 dark:text-white text-base focus:outline-none">
                     <i class="fa-solid fa-bars"></i>
                 </button>
@@ -84,21 +81,18 @@
                     </span>
                     <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
                 </a>
-
                 <a href="index.html#partnerships" class="nav-link mobile-link flex items-center justify-between p-3.5 rounded-xl bg-gray-100/70 dark:bg-white/[0.03] border border-gray-200/80 dark:border-white/5 text-gray-800 dark:text-gray-200 font-semibold text-sm hover:border-brandGold/40 transition-all">
                     <span class="flex items-center gap-3">
                         <i class="fa-solid fa-handshake-simple text-brandGold w-4 text-center"></i> Partnerships
                     </span>
                     <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
                 </a>
-
                 <a href="index.html#services" class="nav-link mobile-link flex items-center justify-between p-3.5 rounded-xl bg-gray-100/70 dark:bg-white/[0.03] border border-gray-200/80 dark:border-white/5 text-gray-800 dark:text-gray-200 font-semibold text-sm hover:border-brandGold/40 transition-all">
                     <span class="flex items-center gap-3">
                         <i class="fa-solid fa-bolt text-brandGold w-4 text-center"></i> What I Do
                     </span>
                     <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
                 </a>
-
                 <a href="#" class="mobile-link flex items-center justify-between p-3.5 rounded-xl bg-brandGold/10 border border-brandGold/30 text-brandGold font-bold text-sm shadow-[0_0_15px_rgba(234,179,8,0.15)] transition-all">
                     <span class="flex items-center gap-3">
                         <i class="fa-solid fa-gift text-brandGold w-4 text-center"></i> Active Drops
@@ -130,43 +124,14 @@
         <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Exclusive opportunities, massive giveaways, and rewards for the real Web3 community. No gatekeeping.</p>
     </header>
 
-    <!-- Active Drops Grid -->
+    <!-- Active Drops Grid (CONTENEDOR DINÁMICO) -->
     <section class="relative z-10 max-w-[1400px] mx-auto px-6 pb-32">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            
-            <!-- Tarjeta Drop 1 -->
-            <div class="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-brandGold/30 rounded-3xl p-8 relative overflow-hidden group hover:border-brandGold transition-all duration-300 reveal delay-100 shadow-[0_0_30px_rgba(234,179,8,0.05)]">
-                <div class="absolute top-6 right-6 px-3 py-1 bg-brandGold/20 border border-brandGold/50 text-brandGold text-xs font-bold uppercase rounded-full tracking-wider animate-pulse">
-                    Live
-                </div>
-                
-                <div class="w-16 h-16 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-3xl mb-6">
-                    💰
-                </div>
-                
-                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">$100 SOL Giveaway</h3>
-                <p class="text-gray-600 dark:text-gray-400 mb-8">Join the Tribe and participate in our weekly $SOL drop. Requirements are simple: be active and support the ecosystem.</p>
-                
-                <!-- BOTÓN ACTUALIZADO CON ID Y ETIQUETA BUTTON -->
-                <button id="btn-participate-sol" class="w-full block text-center px-6 py-4 bg-gray-900 dark:bg-white/10 hover:bg-brandGold text-white hover:text-black font-bold rounded-xl transition-colors border border-transparent dark:border-white/10 hover:border-brandGold cursor-pointer">
-                    Participate on X
-                </button>
+        <div id="dynamic-drops-container" class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl mx-auto">
+            <!-- Loading State Inicial -->
+            <div class="col-span-full text-center py-12">
+                <i class="fa-solid fa-spinner fa-spin text-brandGold text-3xl"></i>
+                <p class="mt-4 text-gray-400 font-bold">Scanning blockchain for active drops...</p>
             </div>
-
-            <!-- Tarjeta Drop 2 -->
-            <div class="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/5 rounded-3xl p-8 relative overflow-hidden group hover:border-brandGold/50 transition-all duration-300 reveal delay-200">
-                <div class="w-16 h-16 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-3xl mb-6">
-                    🎮
-                </div>
-                
-                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">FortuneJack VIP Slots</h3>
-                <p class="text-gray-600 dark:text-gray-400 mb-8">Exclusive VIP registration slots for my community. Instant payouts and special sign-up bonuses just for the Tribe.</p>
-                
-                <a href="#" class="w-full block text-center px-6 py-4 bg-gray-900 dark:bg-white/10 hover:bg-brandGold text-white hover:text-black font-bold rounded-xl transition-colors border border-transparent dark:border-white/10 hover:border-brandGold">
-                    Claim Slot
-                </a>
-            </div>
-
         </div>
     </section>
 
