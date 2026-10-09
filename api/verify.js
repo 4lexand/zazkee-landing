@@ -61,7 +61,7 @@ export default async function handler(req, res) {
         isFollowing = true;
 
         // ==========================================
-        // REGISTRO EN SUPABASE
+        // REGISTRO EN SUPABASE CON PROTECCIÓN DE DUPLICADOS
         // ==========================================
         const supabaseUrl = "https://yhggkrhppvimfikiylbp.supabase.co";
         const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloZ2drcmhwcHZpbWZpa2l5bGJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0ODAwNjcsImV4cCI6MjEwNzA1NjA2N30.fmj-5oeYlFNcg7hKeGpDzjAOpmV4AP6p7GiH0OirZls";
@@ -71,7 +71,8 @@ export default async function handler(req, res) {
             headers: {
                 'apikey': supabaseKey,
                 'Authorization': `Bearer ${supabaseKey}`,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation' // Esencial para que devuelva el código de error 23505
             },
             body: JSON.stringify({
                 user_id: user_id,
@@ -84,8 +85,15 @@ export default async function handler(req, res) {
             })
         });
 
+        // Manejo de errores incluyendo el candado de duplicados
         if (!dbResponse.ok) {
             const dbError = await dbResponse.json();
+            
+            // Código 23505 en Postgres significa "Violación de llave única" (Duplicado)
+            if (dbError.code === '23505') {
+                return res.status(400).json({ error: 'already_entered' });
+            }
+            
             console.error("Error insertando en BD:", dbError);
             throw new Error('Fallo al insertar en DB');
         }

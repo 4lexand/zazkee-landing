@@ -210,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const loginBtnDesktop = document.getElementById('btn-login-x-desktop');
         const loginBtnMobile = document.getElementById('btn-login-x-mobile');
 
-        // Función renombrada para consistencia
+        // Función de inicio de sesión con redirección a drops
        async function signInWithX() {
             if (loginBtnDesktop) loginBtnDesktop.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
             if (loginBtnMobile) loginBtnMobile.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
@@ -218,7 +218,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const { data, error } = await supabase.auth.signInWithOAuth({
                 provider: 'x',
                 options: {
-                    // Obliga a Supabase a volver a la página de drops
                     redirectTo: 'https://zazkee-landing.vercel.app/giveaways.html' 
                 }
             });
@@ -234,7 +233,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (session) {
                 const username = session.user.user_metadata.user_name || session.user.user_metadata.preferred_username || 'Tribe Member';
                 
-                // IMPORTANTE: fa-brands fa-x-twitter se queda así porque es la clase oficial de FontAwesome
                 const loggedInHTML = `<i class="fa-brands fa-x-twitter"></i> @${username}`;
                 
                 if (loginBtnDesktop) {
@@ -249,28 +247,37 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             } else {
                 const loggedOutHTML = `<i class="fa-brands fa-x-twitter"></i> Connect X`;
-                if (loginBtnDesktop) loginBtnDesktop.innerHTML = loggedOutHTML;
-                if (loginBtnMobile) loginBtnMobile.innerHTML = loggedOutHTML;
+                if (loginBtnDesktop) {
+                    loginBtnDesktop.innerHTML = loggedOutHTML;
+                    loginBtnDesktop.classList.remove('bg-brandGold', 'text-black');
+                    loginBtnDesktop.classList.add('bg-black', 'text-white', 'dark:bg-white', 'dark:text-black');
+                }
+                if (loginBtnMobile) {
+                    loginBtnMobile.innerHTML = loggedOutHTML;
+                    loginBtnMobile.classList.remove('bg-brandGold', 'text-black');
+                    loginBtnMobile.classList.add('bg-black', 'text-white', 'dark:bg-white', 'dark:text-black');
+                }
             }
         }
 
-        // --- NUEVO: VALIDADOR DE PARTICIPACIONES ---
+        // --- VALIDADOR DE PARTICIPACIONES Y BLOQUEO DE DUPLICADOS ---
         const btnParticipateSol = document.getElementById('btn-participate-sol');
         
         if (btnParticipateSol) {
             btnParticipateSol.addEventListener('click', async function() {
-                // 1. Extraer la sesión y el token de X de la memoria local
-                const sessionData = JSON.parse(localStorage.getItem('sb-yhggkrhppvimfikiylbp-auth-token'));
+                // 1. OBTENER SESIÓN FRESCA DE SUPABASE (Evita el falso login en memoria local)
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
                 
-                if (!sessionData || !sessionData.provider_token) {
-                    alert("⚠️ Please Connect X first (top right button).");
+                if (sessionError || !session || !session.provider_token) {
+                    alert("⚠️ Session expired or invalid. Please click 'Connect X' again to refresh.");
+                    updateLoginUI(null);
                     return;
                 }
 
                 // Estado de carga visual
                 const originalText = this.innerHTML;
                 this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
-                this.style.pointerEvents = 'none'; // Evitar doble clic
+                this.style.pointerEvents = 'none';
 
                 try {
                     // 2. Enviar el token y los datos al backend en Vercel
@@ -278,25 +285,30 @@ document.addEventListener("DOMContentLoaded", () => {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            provider_token: sessionData.provider_token,
-                            username: sessionData.user.user_metadata.user_name || sessionData.user.user_metadata.preferred_username,
-                            user_id: sessionData.user.id,
-                            twitter_id: sessionData.user.user_metadata.provider_id, // El ID numérico del usuario en X
-                            drop_id: 'drop_100_sol', // El identificador interno de este giveaway
-                            target_tweet: '2105483856820240766', // El ID de tu tweet
-                            target_account: 'zazzkeee' // La cuenta a seguir
+                            provider_token: session.provider_token,
+                            username: session.user.user_metadata.user_name || session.user.user_metadata.preferred_username,
+                            user_id: session.user.id,
+                            twitter_id: session.user.user_metadata.provider_id,
+                            drop_id: 'drop_100_sol', 
+                            target_tweet: '2105483856820240766', 
+                            target_account: 'zazzkeee' 
                         })
                     });
 
                     const data = await response.json();
 
                     if (response.ok) {
-                        // Conexión exitosa con el backend
-                        console.log("Backend response:", data);
+                        // Éxito: Participación nueva guardada
                         this.innerHTML = '<i class="fa-solid fa-check"></i> Confirmed!';
-                        this.style.backgroundColor = '#22c55e'; // Verde éxito
+                        this.style.backgroundColor = '#22c55e'; // Verde
                         this.style.color = 'white';
                         this.style.borderColor = '#22c55e';
+                    } else if (data.error === 'already_entered') {
+                        // Bloqueo: El usuario ya estaba registrado en la BD
+                        this.innerHTML = '<i class="fa-solid fa-check-double"></i> Already Entered';
+                        this.style.backgroundColor = '#3b82f6'; // Azul
+                        this.style.color = 'white';
+                        this.style.borderColor = '#3b82f6';
                     } else {
                         // Error del backend
                         alert("Error: " + data.error);
@@ -314,17 +326,30 @@ document.addEventListener("DOMContentLoaded", () => {
         
         async function checkUserSession() {
             const { data: { session }, error } = await supabase.auth.getSession();
+            
             if (error) {
                 console.error("Error validando sesión:", error);
             }
-            updateLoginUI(session);
 
-            supabase.auth.onAuthStateChange((_event, session) => {
+            // VALIDACIÓN ESTRICTA: Si hay sesión pero X nos quitó el token, forzamos cierre
+            if (session && !session.provider_token) {
+                console.warn("Sesión detectada, pero el token de X expiró. Limpiando credenciales...");
+                await supabase.auth.signOut();
+                updateLoginUI(null);
+            } else {
                 updateLoginUI(session);
+            }
+
+            supabase.auth.onAuthStateChange(async (_event, session) => {
+                if (session && !session.provider_token) {
+                    await supabase.auth.signOut();
+                    updateLoginUI(null);
+                } else {
+                    updateLoginUI(session);
+                }
             });
         }
 
-        // Llamadas actualizadas con el nuevo nombre de la función
         if (loginBtnDesktop) loginBtnDesktop.addEventListener('click', signInWithX);
         if (loginBtnMobile) loginBtnMobile.addEventListener('click', signInWithX);
 
