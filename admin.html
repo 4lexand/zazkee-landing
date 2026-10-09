@@ -36,7 +36,7 @@
         </div>
     </div>
 
-    <!-- PANEL DE CONTROL (Oculto por defecto) -->
+    <!-- PANEL DE CONTROL -->
     <div id="admin-dashboard" class="hidden p-6 md:p-12 max-w-5xl mx-auto">
         <header class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-white/10 pb-6">
             <div>
@@ -70,10 +70,9 @@
                 
                 <h2 class="text-xl font-bold mb-2">Ready to pick a winner?</h2>
                 
-                <!-- Selector de Drop para auditar -->
                 <div class="max-w-xs mx-auto mb-6">
                     <select id="select-audit-drop" class="w-full bg-black border border-white/20 text-white rounded-lg p-2 outline-none">
-                        <option value="drop_100_sol">drop_100_sol</option>
+                        <!-- Opciones dinámicas -->
                     </select>
                 </div>
 
@@ -116,15 +115,21 @@
             </div>
         </div>
 
-        <!-- SECCIÓN 2: CREACIÓN DE DROPS -->
+        <!-- SECCIÓN 2: CREACIÓN DE DROPS (ACTUALIZADO) -->
         <div id="section-create" class="hidden">
             <div class="bg-white/5 border border-white/10 rounded-2xl p-8 max-w-2xl mx-auto">
                 <h2 class="text-2xl font-bold mb-6 border-b border-white/10 pb-4"><i class="fa-solid fa-rocket text-brandGold mr-2"></i> Launch New Giveaway</h2>
                 
                 <form id="form-create-drop" class="space-y-6">
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-2">Drop Internal ID (No spaces)</label>
-                        <input type="text" id="drop-id" placeholder="e.g., drop_500_usdc" class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-brandGold" required>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">Drop Internal ID</label>
+                            <input type="text" id="drop-id" placeholder="e.g., drop_500_usdc" class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-brandGold" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">Duration (Days)</label>
+                            <input type="number" id="drop-duration" placeholder="e.g., 5" min="1" value="7" class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-brandGold" required>
+                        </div>
                     </div>
                     
                     <div>
@@ -140,7 +145,20 @@
                         </select>
                     </div>
 
-                    <button type="submit" class="w-full py-4 bg-brandGold text-black font-bold text-lg rounded-xl hover:bg-yellow-400 transition-all shadow-[0_0_15px_rgba(234,179,8,0.2)]">
+                    <!-- Campos Ocultos para el Código -->
+                    <div id="code-fields" class="hidden space-y-4 bg-black/40 p-6 rounded-xl border border-white/10">
+                        <h4 class="text-sm font-bold text-[#00ff88] uppercase tracking-wider mb-2"><i class="fa-solid fa-key mr-2"></i>Code Configuration</h4>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Secret Code</label>
+                            <input type="text" id="drop-code" placeholder="e.g., ZAZZKE" class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-[#00ff88]">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Partner URL (Optional)</label>
+                            <input type="url" id="drop-url" placeholder="https://..." class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-[#00ff88]">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-4 bg-brandGold text-black font-bold text-lg rounded-xl hover:bg-yellow-400 transition-all shadow-[0_0_15px_rgba(234,179,8,0.2)] mt-4">
                         Activate Drop to Database
                     </button>
                 </form>
@@ -156,191 +174,139 @@
         const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloZ2drcmhwcHZpbWZpa2l5bGJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0ODAwNjcsImV4cCI6MjEwNzA1NjA2N30.fmj-5oeYlFNcg7hKeGpDzjAOpmV4AP6p7GiH0OirZls"; 
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // ==========================================
-        // 1. SISTEMA DE SEGURIDAD (WHITELIST)
-        // ==========================================
-        // Añade aquí los usuarios exactos de X que tienen permiso de administrador
         const ADMIN_USERS = ['4lexx07', 'zazzkeee']; 
         
-        const securityScreen = document.getElementById('security-screen');
-        const adminDashboard = document.getElementById('admin-dashboard');
-        const securityMsg = document.getElementById('security-msg');
-        const btnAdminLogin = document.getElementById('btn-admin-login');
-
+        // Autenticación...
         async function verifyAdminAccess() {
-            const { data: { session }, error } = await supabaseClient.auth.getSession();
-            
+            const { data: { session } } = await supabaseClient.auth.getSession();
             if (!session) {
-                securityMsg.textContent = "Admin authorization required.";
-                btnAdminLogin.classList.remove('hidden');
+                document.getElementById('security-msg').textContent = "Admin authorization required.";
+                document.getElementById('btn-admin-login').classList.remove('hidden');
                 return;
             }
-
             const username = (session.user.user_metadata.user_name || session.user.user_metadata.preferred_username || "").toLowerCase();
-
             if (ADMIN_USERS.includes(username)) {
-                // ACCESO CONCEDIDO
-                securityScreen.classList.add('opacity-0', 'pointer-events-none');
-                setTimeout(() => securityScreen.style.display = 'none', 500);
-                adminDashboard.classList.remove('hidden');
+                document.getElementById('security-screen').style.display = 'none';
+                document.getElementById('admin-dashboard').classList.remove('hidden');
                 document.getElementById('admin-name').textContent = `@${username}`;
-                
-                // Cargar datos
-                loadActiveDrops();
-                fetchEntries('drop_100_sol'); 
+                loadActiveDrops(); 
             } else {
-                // ACCESO DENEGADO
-                securityMsg.innerHTML = `<span class="text-red-500 font-bold">ACCESS DENIED</span><br>@${username} is not registered as an administrator.`;
-                btnAdminLogin.innerHTML = '<i class="fa-solid fa-right-from-bracket mr-2"></i> Sign Out & Switch Account';
-                btnAdminLogin.classList.remove('hidden');
-                
-                // Si hace clic, cierra sesión para que intente con otra cuenta
-                btnAdminLogin.onclick = async () => {
-                    await supabaseClient.auth.signOut();
-                    window.location.reload();
-                };
+                document.getElementById('security-msg').innerHTML = `<span class="text-red-500 font-bold">ACCESS DENIED</span><br>@${username} is not an admin.`;
+                document.getElementById('btn-admin-login').classList.remove('hidden');
+                document.getElementById('btn-admin-login').onclick = async () => { await supabaseClient.auth.signOut(); window.location.reload(); };
             }
         }
-
-        btnAdminLogin.addEventListener('click', async () => {
-            await supabaseClient.auth.signInWithOAuth({
-                provider: 'x',
-                options: { redirectTo: window.location.href }
-            });
-        });
-
-        document.getElementById('btn-logout').addEventListener('click', async () => {
-            await supabaseClient.auth.signOut();
-            window.location.reload();
-        });
-
-        // Ejecutar seguridad al cargar
+        document.getElementById('btn-admin-login').addEventListener('click', async () => await supabaseClient.auth.signInWithOAuth({ provider: 'x' }));
+        document.getElementById('btn-logout').addEventListener('click', async () => { await supabaseClient.auth.signOut(); window.location.reload(); });
         verifyAdminAccess();
 
-        // ==========================================
-        // 2. LÓGICA DE INTERFAZ (PESTAÑAS)
-        // ==========================================
-        const tabDraw = document.getElementById('tab-draw');
-        const tabCreate = document.getElementById('tab-create');
-        const secDraw = document.getElementById('section-draw');
-        const secCreate = document.getElementById('section-create');
-
-        tabDraw.addEventListener('click', () => {
-            secDraw.classList.remove('hidden'); secCreate.classList.add('hidden');
-            tabDraw.classList.replace('bg-white/5', 'bg-brandGold');
-            tabDraw.classList.replace('text-gray-300', 'text-black');
-            tabDraw.classList.replace('border-white/10', 'border-brandGold');
-            
-            tabCreate.classList.replace('bg-brandGold', 'bg-white/5');
-            tabCreate.classList.replace('text-black', 'text-gray-300');
-            tabCreate.classList.replace('border-brandGold', 'border-white/10');
+        // Pestañas...
+        document.getElementById('tab-draw').addEventListener('click', () => {
+            document.getElementById('section-draw').classList.remove('hidden'); document.getElementById('section-create').classList.add('hidden');
+            document.getElementById('tab-draw').className = "flex-1 py-3 bg-brandGold text-black font-bold rounded-lg border border-brandGold";
+            document.getElementById('tab-create').className = "flex-1 py-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold rounded-lg border border-white/10 transition-colors";
+        });
+        document.getElementById('tab-create').addEventListener('click', () => {
+            document.getElementById('section-create').classList.remove('hidden'); document.getElementById('section-draw').classList.add('hidden');
+            document.getElementById('tab-create').className = "flex-1 py-3 bg-brandGold text-black font-bold rounded-lg border border-brandGold";
+            document.getElementById('tab-draw').className = "flex-1 py-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold rounded-lg border border-white/10 transition-colors";
         });
 
-        tabCreate.addEventListener('click', () => {
-            secCreate.classList.remove('hidden'); secDraw.classList.add('hidden');
-            tabCreate.classList.replace('bg-white/5', 'bg-brandGold');
-            tabCreate.classList.replace('text-gray-300', 'text-black');
-            tabCreate.classList.replace('border-white/10', 'border-brandGold');
-            
-            tabDraw.classList.replace('bg-brandGold', 'bg-white/5');
-            tabDraw.classList.replace('text-black', 'text-gray-300');
-            tabDraw.classList.replace('border-brandGold', 'border-white/10');
+        // Toggle campos de código...
+        document.getElementById('drop-type').addEventListener('change', function() {
+            const codeFields = document.getElementById('code-fields');
+            if(this.value === 'code') {
+                codeFields.classList.remove('hidden');
+                document.getElementById('drop-code').required = true;
+            } else {
+                codeFields.classList.add('hidden');
+                document.getElementById('drop-code').required = false;
+            }
         });
 
-        // ==========================================
-        // 3. AUDITORÍA Y SORTEOS
-        // ==========================================
+        // Sorteo y Base de Datos...
         let activeEntries = [];
-        
         async function loadActiveDrops() {
-            const { data, error } = await supabaseClient.from('drops').select('*').eq('status', 'active');
+            // Nota: Aquí cargamos TODOS para que el admin pueda sortear incluso los que ya expiraron
+            const { data } = await supabaseClient.from('drops').select('*').order('created_at', { ascending: false });
             if (data && data.length > 0) {
                 const selector = document.getElementById('select-audit-drop');
                 selector.innerHTML = data.map(d => `<option value="${d.id}">${d.title} (${d.drop_type})</option>`).join('');
-                
                 selector.addEventListener('change', (e) => fetchEntries(e.target.value));
-                fetchEntries(selector.value); // Cargar el primero
+                fetchEntries(selector.value);
             }
         }
 
         async function fetchEntries(dropId) {
-            const { data, error } = await supabaseClient.from('drop_entries').select('*').eq('drop_id', dropId).order('created_at', { ascending: false });
-            
-            const tbody = document.getElementById('participants-table');
-            
-            if (error) {
-                tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-red-500 font-bold">Error: ${error.message}</td></tr>`;
-                return;
-            }
-
+            const { data } = await supabaseClient.from('drop_entries').select('*').eq('drop_id', dropId).order('created_at', { ascending: false });
             activeEntries = data || [];
             document.getElementById('total-count').textContent = activeEntries.length;
-
+            const tbody = document.getElementById('participants-table');
             if (activeEntries.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-gray-500">No participants for this drop yet.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-gray-500">No participants yet.</td></tr>';
                 return;
             }
-
-            tbody.innerHTML = activeEntries.map(entry => {
-                return `
-                    <tr class="hover:bg-white/5 transition-colors">
-                        <td class="p-4 font-bold text-white">@${entry.username}</td>
-                        <td class="p-4 text-xs text-gray-400">${entry.drop_id}</td>
-                        <td class="p-4 text-gray-400">${new Date(entry.created_at).toLocaleString()}</td>
-                    </tr>
-                `;
-            }).join('');
+            tbody.innerHTML = activeEntries.map(entry => `
+                <tr class="hover:bg-white/5 border-b border-white/5">
+                    <td class="p-4 font-bold text-white">@${entry.username}</td>
+                    <td class="p-4 text-xs text-gray-400">${entry.drop_id}</td>
+                    <td class="p-4 text-gray-400">${new Date(entry.created_at).toLocaleString()}</td>
+                </tr>
+            `).join('');
         }
 
         document.getElementById('btn-draw').addEventListener('click', function() {
             if (activeEntries.length === 0) return alert("No participants yet.");
-
-            this.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Calculating Matrix...';
+            this.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Calculating...';
             this.style.pointerEvents = 'none';
-
             setTimeout(() => {
                 const winner = activeEntries[Math.floor(Math.random() * activeEntries.length)];
                 document.getElementById('winner-card').classList.remove('hidden');
                 document.getElementById('winner-username').textContent = `@${winner.username}`;
                 document.getElementById('link-profile').href = `https://x.com/${winner.username}`;
                 document.getElementById('link-tweet').href = `https://x.com/search?q=from%3A${winner.username}%20to%3Azazzkeee&src=typed_query`;
-
-                this.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Reroll / Draw Again';
+                this.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Draw Again';
                 this.style.pointerEvents = 'auto';
             }, 1000);
         });
 
-        // ==========================================
-        // 4. CREAR NUEVOS DROPS (CMS)
-        // ==========================================
+        // CREAR DROPS CON FECHA Y CÓDIGOS
         document.getElementById('form-create-drop').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = e.target.querySelector('button');
-            const originalText = btn.innerHTML;
+            const btn = e.target.querySelector('button[type="submit"]');
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
             btn.disabled = true;
+
+            const type = document.getElementById('drop-type').value;
+            const days = parseInt(document.getElementById('drop-duration').value);
+            
+            // Calculamos la fecha en la que expira
+            const expiresAt = new Date();
+            expiresAt.setDate(expiresAt.getDate() + days);
 
             const newDrop = {
                 id: document.getElementById('drop-id').value.trim(),
                 title: document.getElementById('drop-title').value.trim(),
-                drop_type: document.getElementById('drop-type').value
+                drop_type: type,
+                expires_at: expiresAt.toISOString(),
+                secret_code: type === 'code' ? document.getElementById('drop-code').value.trim() : null,
+                claim_url: type === 'code' ? document.getElementById('drop-url').value.trim() : null
             };
 
             const { error } = await supabaseClient.from('drops').insert([newDrop]);
 
-            btn.innerHTML = originalText;
+            btn.innerHTML = 'Activate Drop to Database';
             btn.disabled = false;
 
-            if (error) {
-                alert("Error al crear el drop: " + error.message);
-            } else {
+            if (error) alert("Error: " + error.message);
+            else {
                 e.target.reset();
+                document.getElementById('code-fields').classList.add('hidden');
                 document.getElementById('drop-success-msg').classList.remove('hidden');
                 setTimeout(() => document.getElementById('drop-success-msg').classList.add('hidden'), 4000);
-                loadActiveDrops(); // Refrescar la lista de drops
+                loadActiveDrops();
             }
         });
-
     </script>
 </body>
 </html>
