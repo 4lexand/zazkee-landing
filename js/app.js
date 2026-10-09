@@ -196,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (typeof window.supabase !== 'undefined') {
         
         // ¡REEMPLAZA ESTO! PON TUS DATOS ADENTRO DE LAS COMILLAS DOBLES
-        const supabaseUrl = "https://yhggkrhppvimfikiylbp.supabase.co/rest/v1/"; 
+        const supabaseUrl = "https://yhggkrhppvimfikiylbp.supabase.co"; 
         const supabaseKey = "sb_publishable_705SiIydShE9qdE1mVZIRg_Hb4g9bIA"; 
         
         // 🚨 PRUEBA DEFINITIVA: DETECTOR DE LLAVES
