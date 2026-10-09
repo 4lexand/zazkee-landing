@@ -197,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // ¡REEMPLAZA ESTO! PON TUS DATOS ADENTRO DE LAS COMILLAS DOBLES
         const supabaseUrl = "https://yhggkrhppvimfikiylbp.supabase.co"; 
-        const supabaseKey = "sb_publishable_705SiIydShE9qdE1mVZIRg_Hb4g9bIA"; 
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloZ2drcmhwcHZpbWZpa2l5bGJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0ODAwNjcsImV4cCI6MjEwNzA1NjA2N30.fmj-5oeYlFNcg7hKeGpDzjAOpmV4AP6p7GiH0OirZls"; 
         
         // 🚨 PRUEBA DEFINITIVA: DETECTOR DE LLAVES
         if (!supabaseKey || supabaseKey.includes("TU_") || supabaseKey === "") {
