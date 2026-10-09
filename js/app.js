@@ -195,7 +195,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // El código solo se ejecuta si el script de Supabase se cargó correctamente
     if (typeof window.supabase !== 'undefined') {
         
-        // ¡REEMPLAZA ESTO! PON TUS DATOS ADENTRO DE LAS COMILLAS DOBLES
         const supabaseUrl = "https://yhggkrhppvimfikiylbp.supabase.co"; 
         const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloZ2drcmhwcHZpbWZpa2l5bGJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0ODAwNjcsImV4cCI6MjEwNzA1NjA2N30.fmj-5oeYlFNcg7hKeGpDzjAOpmV4AP6p7GiH0OirZls"; 
         
@@ -211,13 +210,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const loginBtnDesktop = document.getElementById('btn-login-x-desktop');
         const loginBtnMobile = document.getElementById('btn-login-x-mobile');
 
-        async function signInWithTwitter() {
+        // Función renombrada para consistencia
+        async function signInWithX() {
             if (loginBtnDesktop) loginBtnDesktop.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
             if (loginBtnMobile) loginBtnMobile.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
             
+            // Proveedor configurado como 'x' para saltar el gateway antiguo
             const { data, error } = await supabase.auth.signInWithOAuth({
-                provider: 'twitter',
+                provider: 'x',
             });
+            
             if (error) {
                 console.error("Error al iniciar sesión:", error.message);
                 alert("Hubo un error al conectar con X. Revisa la consola.");
@@ -228,6 +230,8 @@ document.addEventListener("DOMContentLoaded", () => {
         function updateLoginUI(session) {
             if (session) {
                 const username = session.user.user_metadata.user_name || session.user.user_metadata.preferred_username || 'Tribe Member';
+                
+                // IMPORTANTE: fa-brands fa-x-twitter se queda así porque es la clase oficial de FontAwesome
                 const loggedInHTML = `<i class="fa-brands fa-x-twitter"></i> @${username}`;
                 
                 if (loginBtnDesktop) {
@@ -259,8 +263,9 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        if (loginBtnDesktop) loginBtnDesktop.addEventListener('click', signInWithTwitter);
-        if (loginBtnMobile) loginBtnMobile.addEventListener('click', signInWithTwitter);
+        // Llamadas actualizadas con el nuevo nombre de la función
+        if (loginBtnDesktop) loginBtnDesktop.addEventListener('click', signInWithX);
+        if (loginBtnMobile) loginBtnMobile.addEventListener('click', signInWithX);
 
         checkUserSession();
     } else {
