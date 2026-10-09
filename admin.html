@@ -110,7 +110,7 @@
                 const { data, error } = await supabaseClient
                     .from('drop_entries')
                     .select('*')
-                    .eq('drop_id', 'drop_100_sol') // Filtramos solo por este giveaway
+                   // .eq('drop_id', 'drop_100_sol') // Filtramos solo por este giveaway
                     .order('created_at', { ascending: false });
                 
                 const tbody = document.getElementById('participants-table');
