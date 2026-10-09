@@ -253,7 +253,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (loginBtnMobile) loginBtnMobile.innerHTML = loggedOutHTML;
             }
         }
-// --- NUEVO: VALIDADOR DE PARTICIPACIONES ---
+
+        // --- NUEVO: VALIDADOR DE PARTICIPACIONES ---
         const btnParticipateSol = document.getElementById('btn-participate-sol');
         
         if (btnParticipateSol) {
@@ -280,7 +281,10 @@ document.addEventListener("DOMContentLoaded", () => {
                             provider_token: sessionData.provider_token,
                             username: sessionData.user.user_metadata.user_name || sessionData.user.user_metadata.preferred_username,
                             user_id: sessionData.user.id,
-                            drop_id: 'drop_100_sol' // El identificador interno de este giveaway
+                            twitter_id: sessionData.user.user_metadata.provider_id, // El ID numérico del usuario en X
+                            drop_id: 'drop_100_sol', // El identificador interno de este giveaway
+                            target_tweet: '2105483856820240766', // El ID de tu tweet
+                            target_account: 'zazzkeee' // La cuenta a seguir
                         })
                     });
 
@@ -307,6 +311,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         }
+        
         async function checkUserSession() {
             const { data: { session }, error } = await supabase.auth.getSession();
             if (error) {
