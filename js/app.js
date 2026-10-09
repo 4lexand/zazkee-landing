@@ -253,7 +253,60 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (loginBtnMobile) loginBtnMobile.innerHTML = loggedOutHTML;
             }
         }
+// --- NUEVO: VALIDADOR DE PARTICIPACIONES ---
+        const btnParticipateSol = document.getElementById('btn-participate-sol');
+        
+        if (btnParticipateSol) {
+            btnParticipateSol.addEventListener('click', async function() {
+                // 1. Extraer la sesión y el token de X de la memoria local
+                const sessionData = JSON.parse(localStorage.getItem('sb-yhggkrhppvimfikiylbp-auth-token'));
+                
+                if (!sessionData || !sessionData.provider_token) {
+                    alert("⚠️ Please Connect X first (top right button).");
+                    return;
+                }
 
+                // Estado de carga visual
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
+                this.style.pointerEvents = 'none'; // Evitar doble clic
+
+                try {
+                    // 2. Enviar el token y los datos al backend en Vercel
+                    const response = await fetch('/api/verify', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            provider_token: sessionData.provider_token,
+                            username: sessionData.user.user_metadata.user_name || sessionData.user.user_metadata.preferred_username,
+                            user_id: sessionData.user.id,
+                            drop_id: 'drop_100_sol' // El identificador interno de este giveaway
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        // Conexión exitosa con el backend
+                        console.log("Backend response:", data);
+                        this.innerHTML = '<i class="fa-solid fa-check"></i> Confirmed!';
+                        this.style.backgroundColor = '#22c55e'; // Verde éxito
+                        this.style.color = 'white';
+                        this.style.borderColor = '#22c55e';
+                    } else {
+                        // Error del backend
+                        alert("Error: " + data.error);
+                        this.innerHTML = originalText;
+                        this.style.pointerEvents = 'auto';
+                    }
+                } catch (error) {
+                    console.error("Network error:", error);
+                    alert("Connection error with verification server.");
+                    this.innerHTML = originalText;
+                    this.style.pointerEvents = 'auto';
+                }
+            });
+        }
         async function checkUserSession() {
             const { data: { session }, error } = await supabase.auth.getSession();
             if (error) {
