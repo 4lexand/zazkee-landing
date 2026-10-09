@@ -30,14 +30,14 @@
             <i class="fa-solid fa-shield-halved text-5xl text-brandGold mb-6"></i>
             <h2 class="text-2xl font-bold mb-2 tracking-widest">RESTRICTED AREA</h2>
             <p id="security-msg" class="text-gray-400 mb-8">Authenticating admin credentials...</p>
-            <button id="btn-admin-login" class="hidden w-full py-4 bg-brandGold text-black font-bold rounded-xl hover:bg-yellow-400">
+            <button id="btn-admin-login" class="hidden w-full py-4 bg-brandGold text-black font-bold rounded-xl hover:bg-yellow-400 transition-colors">
                 <i class="fa-brands fa-x-twitter mr-2"></i> Verify with X
             </button>
         </div>
     </div>
 
     <!-- PANEL DE CONTROL -->
-    <div id="admin-dashboard" class="hidden p-6 md:p-12 max-w-5xl mx-auto">
+    <div id="admin-dashboard" class="hidden p-6 md:p-12 max-w-6xl mx-auto">
         <header class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-white/10 pb-6">
             <div>
                 <h1 class="text-3xl font-extrabold tracking-widest text-white mb-2">
@@ -50,13 +50,16 @@
             </button>
         </header>
 
-        <!-- NAVEGACIÓN DE PESTAÑAS -->
-        <div class="flex gap-4 mb-8">
-            <button id="tab-draw" class="flex-1 py-3 bg-brandGold text-black font-bold rounded-lg border border-brandGold">
-                <i class="fa-solid fa-dice mr-2"></i> Audit & Draw Winner
+        <!-- NAVEGACIÓN DE 3 PESTAÑAS -->
+        <div class="flex flex-col md:flex-row gap-4 mb-8">
+            <button id="tab-draw" class="flex-1 py-3 bg-brandGold text-black font-bold rounded-lg border border-brandGold transition-colors">
+                <i class="fa-solid fa-dice mr-2"></i> Audit & Draw
+            </button>
+            <button id="tab-manage" class="flex-1 py-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold rounded-lg border border-white/10 transition-colors">
+                <i class="fa-solid fa-list-check mr-2"></i> Manage Drops
             </button>
             <button id="tab-create" class="flex-1 py-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold rounded-lg border border-white/10 transition-colors">
-                <i class="fa-solid fa-plus mr-2"></i> Create New Drop
+                <i class="fa-solid fa-plus mr-2"></i> Create Drop
             </button>
         </div>
 
@@ -71,15 +74,14 @@
                 <h2 class="text-xl font-bold mb-2">Ready to pick a winner?</h2>
                 
                 <div class="max-w-xs mx-auto mb-6">
-                    <select id="select-audit-drop" class="w-full bg-black border border-white/20 text-white rounded-lg p-2 outline-none">
-                        <!-- Opciones dinámicas -->
-                    </select>
+                    <select id="select-audit-drop" class="w-full bg-black border border-white/20 text-white rounded-lg p-2 outline-none"></select>
                 </div>
 
                 <button id="btn-draw" class="px-8 py-4 bg-brandGold text-black font-bold text-lg rounded-xl hover:bg-yellow-400 transition-all shadow-[0_0_20px_rgba(234,179,8,0.2)]">
                     <i class="fa-solid fa-dice mr-2"></i> Draw Random Winner
                 </button>
 
+                <!-- Tarjeta del Ganador -->
                 <div id="winner-card" class="hidden mt-8 pt-8 border-t border-white/10">
                     <p class="text-sm text-gray-400 uppercase tracking-widest mb-2">🎉 Winner Selected 🎉</p>
                     <div class="text-4xl md:text-5xl font-extrabold text-brandGold mb-6" id="winner-username">@username</div>
@@ -98,6 +100,7 @@
                 </div>
             </section>
 
+            <!-- Participantes en vivo -->
             <h3 class="text-lg font-bold mb-4 text-gray-300"><i class="fa-solid fa-users text-brandGold mr-2"></i> Live Participant Log</h3>
             <div class="bg-white/5 border border-white/10 rounded-xl overflow-x-auto">
                 <table class="w-full text-left text-sm">
@@ -115,16 +118,41 @@
             </div>
         </div>
 
-        <!-- SECCIÓN 2: CREACIÓN DE DROPS (ACTUALIZADO) -->
+        <!-- SECCIÓN 2: GESTIÓN DE DROPS (NUEVO) -->
+        <div id="section-manage" class="hidden">
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-8">
+                <h2 class="text-2xl font-bold mb-6 border-b border-white/10 pb-4"><i class="fa-solid fa-server text-brandGold mr-2"></i> Database Configuration</h2>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-white/5 border-b border-white/10 text-gray-400 uppercase tracking-wider text-xs">
+                            <tr>
+                                <th class="p-4 font-medium">Internal ID</th>
+                                <th class="p-4 font-medium">Title</th>
+                                <th class="p-4 font-medium">Type</th>
+                                <th class="p-4 font-medium">Status/Expiry</th>
+                                <th class="p-4 font-medium text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="manage-drops-table" class="divide-y divide-white/5 text-gray-200">
+                            <tr><td colspan="5" class="p-6 text-center text-gray-500">Loading drops...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 3: CREAR / EDITAR DROPS -->
         <div id="section-create" class="hidden">
             <div class="bg-white/5 border border-white/10 rounded-2xl p-8 max-w-2xl mx-auto">
-                <h2 class="text-2xl font-bold mb-6 border-b border-white/10 pb-4"><i class="fa-solid fa-rocket text-brandGold mr-2"></i> Launch New Giveaway</h2>
+                <h2 id="form-title" class="text-2xl font-bold mb-6 border-b border-white/10 pb-4"><i class="fa-solid fa-rocket text-brandGold mr-2"></i> Launch New Giveaway</h2>
                 
                 <form id="form-create-drop" class="space-y-6">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm text-gray-400 mb-2">Drop Internal ID</label>
-                            <input type="text" id="drop-id" placeholder="e.g., drop_500_usdc" class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-brandGold" required>
+                            <input type="text" id="drop-id" placeholder="e.g., drop_500_usdc" class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-brandGold disabled:opacity-50" required>
+                            <p class="text-[10px] text-gray-500 mt-1">Cannot be modified if editing</p>
                         </div>
                         <div>
                             <label class="block text-sm text-gray-400 mb-2">Duration (Days)</label>
@@ -158,12 +186,16 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full py-4 bg-brandGold text-black font-bold text-lg rounded-xl hover:bg-yellow-400 transition-all shadow-[0_0_15px_rgba(234,179,8,0.2)] mt-4">
+                    <button type="submit" id="btn-submit-drop" class="w-full py-4 bg-brandGold text-black font-bold text-lg rounded-xl hover:bg-yellow-400 transition-all shadow-[0_0_15px_rgba(234,179,8,0.2)] mt-4">
                         Activate Drop to Database
+                    </button>
+                    <!-- Botón para cancelar la edición -->
+                    <button type="button" id="btn-cancel-edit" class="hidden w-full py-4 bg-white/5 text-white font-bold text-lg rounded-xl hover:bg-white/10 border border-white/10 transition-all mt-2">
+                        Cancel Edit
                     </button>
                 </form>
                 <div id="drop-success-msg" class="hidden mt-4 p-4 bg-green-500/20 text-green-400 border border-green-500/50 rounded-lg text-center">
-                    <i class="fa-solid fa-check-circle mr-2"></i> Drop activated successfully!
+                    <i class="fa-solid fa-check-circle mr-2"></i> Operation successful!
                 </div>
             </div>
         </div>
@@ -175,6 +207,7 @@
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         const ADMIN_USERS = ['4lexx07', 'zazzkeee']; 
+        let editModeId = null; // Variable para saber si estamos creando o editando
         
         // Autenticación...
         async function verifyAdminAccess() {
@@ -196,29 +229,30 @@
                 document.getElementById('btn-admin-login').onclick = async () => { await supabaseClient.auth.signOut(); window.location.reload(); };
             }
         }
-       document.getElementById('btn-admin-login').addEventListener('click', async () => {
-    await supabaseClient.auth.signInWithOAuth({ 
-        provider: 'x',
-        options: {
-            // Esto fuerza a que X te regrese exactamente a esta misma página secreta
-            redirectTo: window.location.origin + '/admin.html' 
-        }
-    });
-});
+
+        document.getElementById('btn-admin-login').addEventListener('click', async () => {
+            await supabaseClient.auth.signInWithOAuth({ provider: 'x', options: { redirectTo: window.location.origin + '/admin.html' } });
+        });
         document.getElementById('btn-logout').addEventListener('click', async () => { await supabaseClient.auth.signOut(); window.location.reload(); });
         verifyAdminAccess();
 
-        // Pestañas...
-        document.getElementById('tab-draw').addEventListener('click', () => {
-            document.getElementById('section-draw').classList.remove('hidden'); document.getElementById('section-create').classList.add('hidden');
-            document.getElementById('tab-draw').className = "flex-1 py-3 bg-brandGold text-black font-bold rounded-lg border border-brandGold";
-            document.getElementById('tab-create').className = "flex-1 py-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold rounded-lg border border-white/10 transition-colors";
-        });
-        document.getElementById('tab-create').addEventListener('click', () => {
-            document.getElementById('section-create').classList.remove('hidden'); document.getElementById('section-draw').classList.add('hidden');
-            document.getElementById('tab-create').className = "flex-1 py-3 bg-brandGold text-black font-bold rounded-lg border border-brandGold";
-            document.getElementById('tab-draw').className = "flex-1 py-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold rounded-lg border border-white/10 transition-colors";
-        });
+        // Pestañas (Controlador Único)
+        function switchTab(activeId) {
+            ['draw', 'manage', 'create'].forEach(tab => {
+                const btn = document.getElementById(`tab-${tab}`);
+                const sec = document.getElementById(`section-${tab}`);
+                if(tab === activeId) {
+                    btn.className = "flex-1 py-3 bg-brandGold text-black font-bold rounded-lg border border-brandGold transition-colors";
+                    sec.classList.remove('hidden');
+                } else {
+                    btn.className = "flex-1 py-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold rounded-lg border border-white/10 transition-colors";
+                    sec.classList.add('hidden');
+                }
+            });
+        }
+        document.getElementById('tab-draw').addEventListener('click', () => switchTab('draw'));
+        document.getElementById('tab-manage').addEventListener('click', () => switchTab('manage'));
+        document.getElementById('tab-create').addEventListener('click', () => { resetForm(); switchTab('create'); });
 
         // Toggle campos de código...
         document.getElementById('drop-type').addEventListener('change', function() {
@@ -232,16 +266,42 @@
             }
         });
 
-        // Sorteo y Base de Datos...
+        // =====================================
+        // CARGA Y AUDITORÍA DE DATOS
+        // =====================================
         let activeEntries = [];
         async function loadActiveDrops() {
-            // Nota: Aquí cargamos TODOS para que el admin pueda sortear incluso los que ya expiraron
             const { data } = await supabaseClient.from('drops').select('*').order('created_at', { ascending: false });
+            
+            // Llenar Selector del Sorteo
             if (data && data.length > 0) {
                 const selector = document.getElementById('select-audit-drop');
                 selector.innerHTML = data.map(d => `<option value="${d.id}">${d.title} (${d.drop_type})</option>`).join('');
                 selector.addEventListener('change', (e) => fetchEntries(e.target.value));
                 fetchEntries(selector.value);
+            }
+
+            // Llenar Tabla de Gestión
+            const manageTbody = document.getElementById('manage-drops-table');
+            if (!data || data.length === 0) {
+                manageTbody.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-gray-500">No drops found in database.</td></tr>';
+            } else {
+                manageTbody.innerHTML = data.map(d => {
+                    const isExpired = new Date(d.expires_at) < new Date();
+                    const statusBadge = isExpired ? `<span class="text-red-400 text-xs bg-red-400/10 px-2 py-1 rounded font-bold">Expired</span>` : `<span class="text-green-400 text-xs bg-green-400/10 px-2 py-1 rounded font-bold">Active</span>`;
+                    
+                    return `
+                    <tr class="hover:bg-white/5 border-b border-white/5 transition-colors">
+                        <td class="p-4 font-mono text-gray-300 text-xs">${d.id}</td>
+                        <td class="p-4 font-bold text-white">${d.title}</td>
+                        <td class="p-4 text-gray-400 uppercase text-xs">${d.drop_type}</td>
+                        <td class="p-4 text-gray-400 text-xs">${new Date(d.expires_at).toLocaleDateString()} <br> ${statusBadge}</td>
+                        <td class="p-4 text-right">
+                            <button onclick="editDrop('${d.id}')" class="text-brandGold hover:text-yellow-300 mr-4 transition-colors" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteDrop('${d.id}')" class="text-red-500 hover:text-red-400 transition-colors" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+                }).join('');
             }
         }
 
@@ -258,11 +318,119 @@
                 <tr class="hover:bg-white/5 border-b border-white/5">
                     <td class="p-4 font-bold text-white">@${entry.username}</td>
                     <td class="p-4 text-xs text-gray-400">${entry.drop_id}</td>
-                    <td class="p-4 text-gray-400">${new Date(entry.created_at).toLocaleString()}</td>
+                    <td class="p-4 text-gray-400 text-xs">${new Date(entry.created_at).toLocaleString()}</td>
                 </tr>
             `).join('');
         }
 
+        // =====================================
+        // ELIMINAR Y EDITAR
+        // =====================================
+        window.deleteDrop = async (id) => {
+            if (!confirm(`⚠️ DANGER ⚠️\n\nAre you absolutely sure you want to delete the drop "${id}"?\nThis will remove it permanently.`)) return;
+            
+            // Primero borramos todas las participaciones de ese sorteo por seguridad, luego el drop.
+            await supabaseClient.from('drop_entries').delete().eq('drop_id', id);
+            const { error } = await supabaseClient.from('drops').delete().eq('id', id);
+            
+            if (error) alert("Error deleting: " + error.message);
+            else loadActiveDrops(); // Recarga la tabla
+        };
+
+        window.editDrop = async (id) => {
+            const { data } = await supabaseClient.from('drops').select('*').eq('id', id).single();
+            if(!data) return;
+
+            editModeId = id; // Activamos modo edición
+            
+            // Llenar campos
+            document.getElementById('drop-id').value = data.id;
+            document.getElementById('drop-id').disabled = true; // No se puede cambiar el ID
+            document.getElementById('drop-title').value = data.title;
+            document.getElementById('drop-type').value = data.drop_type;
+            
+            // Calcular días
+            const diffTime = new Date(data.expires_at) - new Date();
+            const diffDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+            document.getElementById('drop-duration').value = diffDays;
+            
+            document.getElementById('drop-type').dispatchEvent(new Event('change'));
+            
+            if(data.drop_type === 'code') {
+                document.getElementById('drop-code').value = data.secret_code || '';
+                document.getElementById('drop-url').value = data.claim_url || '';
+            }
+
+            // Cambiar textos y botones a modo Edición
+            document.getElementById('form-title').innerHTML = '<i class="fa-solid fa-pen text-brandGold mr-2"></i> Edit Giveaway';
+            document.getElementById('btn-submit-drop').innerHTML = '<i class="fa-solid fa-cloud-arrow-up mr-2"></i> Update Drop Data';
+            document.getElementById('btn-cancel-edit').classList.remove('hidden');
+
+            switchTab('create'); // Nos movemos a la pestaña de creación
+        };
+
+        document.getElementById('btn-cancel-edit').addEventListener('click', resetForm);
+
+        function resetForm() {
+            editModeId = null;
+            document.getElementById('form-create-drop').reset();
+            document.getElementById('drop-id').disabled = false;
+            document.getElementById('drop-type').dispatchEvent(new Event('change'));
+            document.getElementById('form-title').innerHTML = '<i class="fa-solid fa-rocket text-brandGold mr-2"></i> Launch New Giveaway';
+            document.getElementById('btn-submit-drop').innerHTML = 'Activate Drop to Database';
+            document.getElementById('btn-cancel-edit').classList.add('hidden');
+            switchTab('manage');
+        }
+
+        // =====================================
+        // GUARDAR / ACTUALIZAR EN BASE DE DATOS
+        // =====================================
+        document.getElementById('form-create-drop').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit-drop');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+            btn.disabled = true;
+
+            const type = document.getElementById('drop-type').value;
+            const days = parseInt(document.getElementById('drop-duration').value);
+            
+            const expiresAt = new Date();
+            expiresAt.setDate(expiresAt.getDate() + days);
+
+            const dropData = {
+                title: document.getElementById('drop-title').value.trim(),
+                drop_type: type,
+                expires_at: expiresAt.toISOString(),
+                secret_code: type === 'code' ? document.getElementById('drop-code').value.trim() : null,
+                claim_url: type === 'code' ? document.getElementById('drop-url').value.trim() : null
+            };
+
+            let error;
+            if (editModeId) {
+                // Modo ACTUALIZAR
+                const response = await supabaseClient.from('drops').update(dropData).eq('id', editModeId);
+                error = response.error;
+            } else {
+                // Modo CREAR NUEVO (incluye el ID manual)
+                dropData.id = document.getElementById('drop-id').value.trim();
+                const response = await supabaseClient.from('drops').insert([dropData]);
+                error = response.error;
+            }
+
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+
+            if (error) alert("Database Error: " + error.message);
+            else {
+                document.getElementById('drop-success-msg').classList.remove('hidden');
+                setTimeout(() => document.getElementById('drop-success-msg').classList.add('hidden'), 4000);
+                resetForm();
+                loadActiveDrops();
+            }
+        });
+
+        // Lógica Visual del Sorteo
         document.getElementById('btn-draw').addEventListener('click', function() {
             if (activeEntries.length === 0) return alert("No participants yet.");
             this.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Calculating...';
@@ -278,43 +446,6 @@
             }, 1000);
         });
 
-        // CREAR DROPS CON FECHA Y CÓDIGOS
-        document.getElementById('form-create-drop').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = e.target.querySelector('button[type="submit"]');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-            btn.disabled = true;
-
-            const type = document.getElementById('drop-type').value;
-            const days = parseInt(document.getElementById('drop-duration').value);
-            
-            // Calculamos la fecha en la que expira
-            const expiresAt = new Date();
-            expiresAt.setDate(expiresAt.getDate() + days);
-
-            const newDrop = {
-                id: document.getElementById('drop-id').value.trim(),
-                title: document.getElementById('drop-title').value.trim(),
-                drop_type: type,
-                expires_at: expiresAt.toISOString(),
-                secret_code: type === 'code' ? document.getElementById('drop-code').value.trim() : null,
-                claim_url: type === 'code' ? document.getElementById('drop-url').value.trim() : null
-            };
-
-            const { error } = await supabaseClient.from('drops').insert([newDrop]);
-
-            btn.innerHTML = 'Activate Drop to Database';
-            btn.disabled = false;
-
-            if (error) alert("Error: " + error.message);
-            else {
-                e.target.reset();
-                document.getElementById('code-fields').classList.add('hidden');
-                document.getElementById('drop-success-msg').classList.remove('hidden');
-                setTimeout(() => document.getElementById('drop-success-msg').classList.add('hidden'), 4000);
-                loadActiveDrops();
-            }
-        });
     </script>
 </body>
 </html>

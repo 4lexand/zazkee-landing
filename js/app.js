@@ -5,7 +5,9 @@ document.body.style.setProperty('overflow-y', 'auto', 'important');
 document.body.style.setProperty('height', 'auto', 'important');
 
 document.addEventListener("DOMContentLoaded", () => {
-    // (Mantuve intacta toda tu lógica visual de loader, menú y tema oscuro)
+    // ---------------------------------------------------------
+    // Lógica visual básica (Preloader, Menú, Tema Oscuro)
+    // ---------------------------------------------------------
     const preloader = document.getElementById('preloader');
     const enterBtn = document.getElementById('enter-btn');
     const bgVideo = document.getElementById('bg-video');
@@ -111,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // =========================================================
-    // 5. BACKEND CON SUPABASE (FECHAS Y CÓDIGOS)
+    // 5. BACKEND CON SUPABASE (CARGA DE DROPS Y EVENTOS)
     // =========================================================
     
     if (typeof window.supabase !== 'undefined') {
@@ -140,7 +142,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const container = document.getElementById('dynamic-drops-container');
             if (!container) return; 
 
-            // FILTRO MÁGICO: Solo trae los que NO han expirado comparando la fecha de la DB con la fecha de hoy
             const nowIso = new Date().toISOString();
             const { data: drops, error } = await supabase
                 .from('drops')
@@ -154,7 +155,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             container.innerHTML = drops.map(drop => {
-                // Calcular días restantes para mostrar
                 const expiryDate = new Date(drop.expires_at);
                 const diffTime = Math.abs(expiryDate - new Date());
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -169,14 +169,21 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                         <h3 class="text-2xl font-bold mb-1 text-white">${drop.title}</h3>
                         <p class="text-xs text-gray-400 mb-4 font-bold tracking-wider text-brandGold"><i class="fa-regular fa-clock mr-1"></i> ${daysText}</p>
-                        <p class="text-sm text-gray-400 mb-8 flex-grow">Complete the social tasks on X to secure your entry in the smart contract.</p>
                         
-                        <button class="btn-participate-dynamic w-full py-4 bg-brandGold text-black font-bold text-lg rounded-xl hover:bg-yellow-400 transition-all" data-drop-id="${drop.id}">
+                        <!-- Requisitos como lista de tareas pendientes -->
+                        <div class="space-y-3 mb-4 flex-grow bg-black/40 p-5 rounded-xl border border-white/5">
+                            <p class="text-xs text-gray-500 uppercase tracking-wider mb-1 font-bold">Requirements:</p>
+                            <div class="flex items-start text-sm text-gray-300"><i class="fa-solid fa-circle text-[6px] text-brandGold mt-1.5 mr-3"></i> Follow @zazzkeee</div>
+                            <div class="flex items-start text-sm text-gray-300"><i class="fa-solid fa-circle text-[6px] text-brandGold mt-1.5 mr-3"></i> Like, Repost & Tag a friend</div>
+                        </div>
+                        
+                        <p class="text-[11px] text-gray-500 mb-3 text-center uppercase tracking-widest w-full">⚠️ Complete tasks before verifying</p>
+                        
+                        <button class="btn-participate-dynamic w-full py-4 bg-brandGold text-black font-bold text-lg rounded-xl hover:bg-yellow-400 transition-all shadow-[0_0_15px_rgba(234,179,8,0.15)] group-hover:shadow-[0_0_20px_rgba(234,179,8,0.3)]" data-drop-id="${drop.id}">
                             Verify & Participate
                         </button>
                     </div>`;
                 } else if (drop.drop_type === 'code') {
-                    // Si tiene un link opcional, construimos el botón
                     const linkButton = drop.claim_url 
                         ? `<a href="${drop.claim_url}" target="_blank" class="w-full flex justify-center items-center py-4 mt-4 bg-white/5 text-white font-bold text-lg rounded-xl hover:bg-white/10 border border-white/20 transition-all"><i class="fa-solid fa-arrow-up-right-from-square mr-2"></i> Partner Link</a>`
                         : '';
@@ -189,16 +196,23 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                         <h3 class="text-2xl font-bold mb-1 text-white">${drop.title}</h3>
                         <p class="text-xs text-gray-400 mb-4 font-bold tracking-wider text-[#00ff88]"><i class="fa-regular fa-clock mr-1"></i> ${daysText}</p>
-                        <p class="text-sm text-gray-400 mb-6 flex-grow">Copy your exclusive partner code and use it to claim rewards.</p>
+                        <p class="text-sm text-gray-400 mb-6 flex-grow">Claim your exclusive partner code and use it to get rewards.</p>
                         
-                        <!-- Caja del Código Secreto -->
-                        <div class="bg-black border border-dashed border-[#00ff88]/50 rounded-xl p-4 flex justify-between items-center mb-2">
-                            <span class="text-[#00ff88] font-mono font-bold text-xl tracking-widest">${drop.secret_code || 'N/A'}</span>
-                            <button class="text-gray-400 hover:text-white transition-colors btn-copy-code p-2" data-clipboard="${drop.secret_code}">
-                                <i class="fa-regular fa-copy"></i>
-                            </button>
+                        <!-- Botón Inicial (Oculta el código) -->
+                        <button class="btn-reveal-code w-full py-4 bg-white/10 text-white font-bold text-lg rounded-xl hover:bg-white/20 border border-white/20 transition-all" data-target="reveal-box-${drop.id}">
+                            Claim Drop
+                        </button>
+
+                        <!-- Caja del Código Secreto y URL (Oculta al inicio) -->
+                        <div id="reveal-box-${drop.id}" class="hidden flex-col w-full">
+                            <div class="bg-black border border-dashed border-[#00ff88]/50 rounded-xl p-4 flex justify-between items-center mb-2">
+                                <span class="text-[#00ff88] font-mono font-bold text-xl tracking-widest">${drop.secret_code || 'N/A'}</span>
+                                <button class="text-gray-400 hover:text-white transition-colors btn-copy-code p-2" data-clipboard="${drop.secret_code}">
+                                    <i class="fa-regular fa-copy"></i>
+                                </button>
+                            </div>
+                            ${linkButton}
                         </div>
-                        ${linkButton}
                     </div>`;
                 }
             }).join('');
@@ -207,9 +221,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         function attachDynamicListeners() {
-            // Lógica Botón de Participar de Sorteos
+            // 1. Mostrar Caja Fuerte (Código)
+            document.querySelectorAll('.btn-reveal-code').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    // Ocultamos el botón
+                    this.classList.add('hidden');
+                    // Mostramos la caja secreta y el link
+                    const revealBox = document.getElementById(targetId);
+                    revealBox.classList.remove('hidden');
+                    revealBox.classList.add('flex');
+                });
+            });
+
+            // 2. Participar en Drop Social
             document.querySelectorAll('.btn-participate-dynamic').forEach(btn => {
                 btn.addEventListener('click', async function() {
+                    // ADVERTENCIA ANTES DE VERIFICAR
+                    const userConfirmed = confirm("⚠️ ATTENTION ⚠️\n\nDid you complete ALL the requirements (Follow, Like, Repost & Tag a friend)?\n\nIf you click Verify but haven't completed the tasks on X, your entry will be automatically discarded during the audit.");
+                    if (!userConfirmed) return; // Si le dan a cancelar, el script se detiene
+
                     const dropId = this.getAttribute('data-drop-id');
                     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
                     if (sessionError || !session || !session.provider_token) return alert("⚠️ Session expired or invalid. Please Connect X again.");
@@ -229,14 +260,14 @@ document.addEventListener("DOMContentLoaded", () => {
                             })
                         });
                         const data = await response.json();
-                        if (response.ok) { this.innerHTML = '<i class="fa-solid fa-check"></i> Confirmed!'; this.className = "w-full py-4 bg-green-500 text-white font-bold text-lg rounded-xl"; } 
+                        if (response.ok) { this.innerHTML = '<i class="fa-solid fa-check"></i> Confirmed!'; this.className = "w-full py-4 bg-green-500 text-white font-bold text-lg rounded-xl shadow-[0_0_20px_rgba(34,197,94,0.3)]"; } 
                         else if (data.error === 'already_entered') { this.innerHTML = '<i class="fa-solid fa-check-double"></i> Already Entered'; this.className = "w-full py-4 bg-blue-500 text-white font-bold text-lg rounded-xl"; } 
                         else { alert("Error: " + data.error); this.innerHTML = originalText; this.style.pointerEvents = 'auto'; }
                     } catch (error) { alert("Connection error."); this.innerHTML = originalText; this.style.pointerEvents = 'auto'; }
                 });
             });
 
-            // Lógica Botón de Copiar Código
+            // 3. Botón de Copiar Código
             document.querySelectorAll('.btn-copy-code').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const code = this.getAttribute('data-clipboard');
