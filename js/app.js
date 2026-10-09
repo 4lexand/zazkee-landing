@@ -211,19 +211,22 @@ document.addEventListener("DOMContentLoaded", () => {
         const loginBtnMobile = document.getElementById('btn-login-x-mobile');
 
         // Función renombrada para consistencia
-        async function signInWithX() {
+       async function signInWithX() {
             if (loginBtnDesktop) loginBtnDesktop.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
             if (loginBtnMobile) loginBtnMobile.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
             
-            // Proveedor configurado como 'x' para saltar el gateway antiguo
             const { data, error } = await supabase.auth.signInWithOAuth({
                 provider: 'x',
+                options: {
+                    // Obliga a Supabase a volver a la página de drops
+                    redirectTo: 'https://zazkee-landing.vercel.app/giveaways.html' 
+                }
             });
             
             if (error) {
                 console.error("Error al iniciar sesión:", error.message);
                 alert("Hubo un error al conectar con X. Revisa la consola.");
-                updateLoginUI(null); // Restaurar botón
+                updateLoginUI(null); 
             }
         }
 
