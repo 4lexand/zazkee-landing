@@ -196,7 +196,15 @@
                 document.getElementById('btn-admin-login').onclick = async () => { await supabaseClient.auth.signOut(); window.location.reload(); };
             }
         }
-        document.getElementById('btn-admin-login').addEventListener('click', async () => await supabaseClient.auth.signInWithOAuth({ provider: 'x' }));
+       document.getElementById('btn-admin-login').addEventListener('click', async () => {
+    await supabaseClient.auth.signInWithOAuth({ 
+        provider: 'x',
+        options: {
+            // Esto fuerza a que X te regrese exactamente a esta misma página secreta
+            redirectTo: window.location.origin + '/admin.html' 
+        }
+    });
+});
         document.getElementById('btn-logout').addEventListener('click', async () => { await supabaseClient.auth.signOut(); window.location.reload(); });
         verifyAdminAccess();
 
