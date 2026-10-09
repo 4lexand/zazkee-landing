@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZAZKEE Admin - Drops</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'] },
+                    colors: { brandGold: '#EAB308', darker: '#050505' }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-darker text-white font-sans min-h-screen p-6 md:p-12">
+    
+    <div class="max-w-4xl mx-auto">
+        <!-- Encabezado Admin -->
+        <header class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-white/10 pb-6">
+            <div>
+                <h1 class="text-3xl font-extrabold tracking-widest text-white mb-2">
+                    ZAZKEE <span class="text-brandGold">ADMIN</span>
+                </h1>
+                <p class="text-gray-400 text-sm">Control Room & Giveaway Auditing</p>
+            </div>
+            <div class="mt-4 md:mt-0 bg-white/5 border border-white/10 px-6 py-3 rounded-xl">
+                <span class="text-gray-400 text-sm uppercase">Total Entries:</span>
+                <span id="total-count" class="text-2xl font-bold text-brandGold ml-3">0</span>
+            </div>
+        </header>
+
+        <!-- Sección de Sorteo -->
+        <section class="mb-12 bg-white/5 border border-brandGold/30 rounded-2xl p-8 text-center relative overflow-hidden">
+            <h2 class="text-xl font-bold mb-6">Ready to pick a winner?</h2>
+            
+            <button id="btn-draw" class="px-8 py-4 bg-brandGold text-black font-bold text-lg rounded-xl hover:bg-yellow-400 transition-all shadow-[0_0_20px_rgba(234,179,8,0.2)]">
+                <i class="fa-solid fa-dice mr-2"></i> Draw Random Winner
+            </button>
+
+            <!-- Aquí aparece el ganador -->
+            <div id="winner-card" class="hidden mt-8 pt-8 border-t border-white/10">
+                <p class="text-sm text-gray-400 uppercase tracking-widest mb-2">🎉 Winner Selected 🎉</p>
+                <div class="text-4xl md:text-5xl font-extrabold text-brandGold mb-6" id="winner-username">
+                    @username
+                </div>
+                
+                <div class="bg-black/50 rounded-xl p-6 max-w-lg mx-auto border border-white/5">
+                    <p class="text-sm text-gray-300 mb-4"><i class="fa-solid fa-shield-halved text-brandGold"></i> Manual Audit Required:</p>
+                    
+                    <div class="flex flex-col gap-3">
+                        <!-- Botón para ver si lo sigue (Abre el perfil del ganador) -->
+                        <a id="link-profile" href="#" target="_blank" class="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm font-semibold transition-colors flex justify-between items-center px-4">
+                            <span>1. Check Profile (Follows @zazzkeee?)</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-gray-400"></i>
+                        </a>
+                        <!-- Botón para ver los RTs del ganador (Busca su usuario en el tweet) -->
+                        <a id="link-tweet" href="https://x.com/zazzkeee/status/2105483856820240766" target="_blank" class="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm font-semibold transition-colors flex justify-between items-center px-4">
+                            <span>2. Check Tweet (Liked/Reposted?)</span>
+                            <i class="fa-brands fa-x-twitter text-gray-400"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tabla de Participantes (Lectura en vivo) -->
+        <h3 class="text-lg font-bold mb-4 text-gray-300"><i class="fa-solid fa-users text-brandGold mr-2"></i> Live Participant Log</h3>
+        <div class="bg-white/5 border border-white/10 rounded-xl overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-white/5 border-b border-white/10 text-gray-400 uppercase tracking-wider text-xs">
+                    <tr>
+                        <th class="p-4 font-medium">Username</th>
+                        <th class="p-4 font-medium">Drop ID</th>
+                        <th class="p-4 font-medium">Timestamp (UTC)</th>
+                        <th class="p-4 font-medium text-center">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="participants-table" class="divide-y divide-white/5 text-gray-200">
+                    <!-- Filas inyectadas por JS -->
+                    <tr><td colspan="4" class="p-6 text-center text-gray-500">Loading data from Supabase...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Conexión a Supabase usando tus llaves públicas (Es seguro porque el RLS restringe cosas sensibles)
+        const supabaseUrl = "https://yhggkrhppvimfikiylbp.supabase.co"; 
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloZ2drcmhwcHZpbWZpa2l5bGJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0ODAwNjcsImV4cCI6MjEwNzA1NjA2N30.fmj-5oeYlFNcg7hKeGpDzjAOpmV4AP6p7GiH0OirZls"; 
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        let activeEntries = [];
+
+        async function fetchEntries() {
+            const { data, error } = await supabase
+                .from('drop_entries')
+                .select('*')
+                .eq('drop_id', 'drop_100_sol') // Filtramos solo por este giveaway
+                .order('created_at', { ascending: false });
+            
+            if (error) {
+                console.error("Error fetching data:", error);
+                return;
+            }
+
+            activeEntries = data;
+            document.getElementById('total-count').textContent = activeEntries.length;
+
+            const tbody = document.getElementById('participants-table');
+            
+            if (activeEntries.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-gray-500">No participants yet.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = activeEntries.map(entry => {
+                const date = new Date(entry.created_at).toLocaleString();
+                return `
+                    <tr class="hover:bg-white/5 transition-colors">
+                        <td class="p-4 font-bold text-white">@${entry.username}</td>
+                        <td class="p-4"><span class="bg-gray-800 text-gray-300 px-2 py-1 rounded text-xs">${entry.drop_id}</span></td>
+                        <td class="p-4 text-gray-400">${date}</td>
+                        <td class="p-4 text-center"><i class="fa-solid fa-circle-check text-green-500"></i></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Lógica de Sorteo
+        document.getElementById('btn-draw').addEventListener('click', function() {
+            if (activeEntries.length === 0) {
+                alert("No hay participantes para sortear todavía.");
+                return;
+            }
+
+            // Efecto visual de sorteo
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Calculating Matrix...';
+            this.style.pointerEvents = 'none';
+
+            setTimeout(() => {
+                // Matemática de aleatoriedad
+                const randomIndex = Math.floor(Math.random() * activeEntries.length);
+                const winner = activeEntries[randomIndex];
+
+                // Mostrar tarjeta de ganador
+                const winnerCard = document.getElementById('winner-card');
+                winnerCard.classList.remove('hidden');
+                
+                // Inyectar datos del ganador
+                document.getElementById('winner-username').textContent = `@${winner.username}`;
+                
+                // Configurar botón 1: Ver perfil (Para ver si te sigue)
+                document.getElementById('link-profile').href = `https://x.com/${winner.username}`;
+                
+                // Configurar botón 2: Busca el usuario en las respuestas de tu tweet
+                // Un pequeño truco de búsqueda de X: "to:zazzkeee from:usuario"
+                document.getElementById('link-tweet').href = `https://x.com/search?q=from%3A${winner.username}%20to%3Azazzkeee&src=typed_query`;
+
+                // Restaurar botón principal
+                this.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Reroll / Draw Again';
+                this.style.pointerEvents = 'auto';
+            }, 1500); // 1.5 segundos de suspenso
+        });
+
+        // Cargar datos al iniciar
+        fetchEntries();
+    </script>
+</body>
+</html>
