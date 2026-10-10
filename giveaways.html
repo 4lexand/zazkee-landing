@@ -8,22 +8,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- SDK de Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- Tailwind Config con Dark Mode -->
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: { sans: ['Space Grotesk', 'sans-serif'], },
-                    colors: {
-                        dark: '#0a0a0c',
-                        darker: '#050505',
-                        brandGold: '#EAB308',
-                        brandDarkGold: '#ca8a04',
-                    }
+                    colors: { dark: '#0a0a0c', darker: '#050505', brandGold: '#EAB308' }
                 }
             }
         }
@@ -32,7 +25,7 @@
 </head>
 <body class="antialiased selection:bg-brandGold selection:text-black bg-gray-50 dark:bg-[#050505] transition-colors duration-500 overflow-x-hidden">
 
-    <!-- FONDO DE VIDEO OPTIMIZADO PARA MÓVIL -->
+    <!-- FONDO DE VIDEO -->
     <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
         <video id="bg-video" src="videoNo.mp4" poster="poster-noche.jpg" class="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover opacity-90 transition-opacity duration-1000" autoplay loop muted playsinline preload="auto"></video>
         <div id="video-overlay" class="absolute inset-0 bg-black/50 dark:bg-black/60 transition-colors duration-500"></div>
@@ -41,28 +34,32 @@
     <!-- Navigation -->
     <nav id="navbar" class="fixed w-full z-50 top-0 transition-all duration-300 backdrop-blur-xl bg-white/80 dark:bg-darker/90 border-b border-gray-200 dark:border-white/10 py-1">
         <div class="max-w-[1400px] mx-auto px-5 py-3 flex justify-between items-center">
-            <!-- Brand Logo -->
+            
             <a href="index.html" class="nav-link text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-widest text-gray-900 dark:text-white z-50 relative transition-colors">
                 ZAZK<span class="text-brandGold">EE</span>
             </a>
             
             <!-- Desktop Menu -->
             <div class="hidden md:flex items-center space-x-8 lg:space-x-12 text-sm lg:text-base font-medium">
-                <a href="index.html#about" class="nav-link text-gray-600 dark:text-gray-400 hover:text-brandGold dark:hover:text-brandGold transition-colors">About</a>
-                <a href="index.html#partnerships" class="nav-link text-gray-600 dark:text-gray-400 hover:text-brandGold dark:hover:text-brandGold transition-colors">Partnerships</a>
-                <a href="index.html#services" class="nav-link text-gray-600 dark:text-gray-400 hover:text-brandGold dark:hover:text-brandGold transition-colors">What I Do</a>
-                <a href="#" class="text-brandGold font-bold drop-shadow-[0_0_8px_rgba(234,179,8,0.5)] transition-colors">Active Drops</a>
-                <!-- Botón Connect X (Desktop) -->
-                <button id="btn-login-x-desktop" class="px-6 py-2.5 bg-black dark:bg-white text-white dark:text-black hover:bg-brandGold dark:hover:bg-brandGold hover:text-black rounded-full transition-all font-bold shadow-[0_0_15px_rgba(255,255,255,0.1)] flex items-center gap-2">
+                <a href="index.html#about" class="nav-link text-gray-600 dark:text-gray-400 hover:text-brandGold transition-colors">About</a>
+                <a href="index.html#partnerships" class="nav-link text-gray-600 dark:text-gray-400 hover:text-brandGold transition-colors">Partnerships</a>
+                <a href="index.html#services" class="nav-link text-gray-600 dark:text-gray-400 hover:text-brandGold transition-colors">What I Do</a>
+                <a href="#" class="text-brandGold font-bold drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]">Active Drops</a>
+                <button id="btn-login-x-desktop" class="px-6 py-2.5 bg-black dark:bg-white text-white dark:text-black hover:bg-brandGold hover:text-black rounded-full transition-all font-bold shadow-[0_0_15px_rgba(255,255,255,0.1)] flex items-center gap-2">
                     <i class="fa-brands fa-x-twitter"></i> Connect X
                 </button>
-                <button id="theme-toggle" class="text-gray-500 dark:text-gray-400 hover:text-brandGold dark:hover:text-brandGold transition-colors text-xl ml-4 focus:outline-none">
+                <button id="theme-toggle" class="text-gray-500 dark:text-gray-400 hover:text-brandGold text-xl ml-4 focus:outline-none">
                     <i class="fa-solid fa-moon" id="theme-icon"></i>
                 </button>
             </div>
 
-            <!-- Mobile Quick Actions Bar -->
-            <div class="md:hidden flex items-center gap-2.5 z-50 relative">
+            <!-- Mobile Quick Actions Bar (AHORA INCLUYE EL LOGIN) -->
+            <div class="md:hidden flex items-center gap-2 z-50 relative">
+                
+                <button id="btn-login-x-mobile" class="px-4 py-2 bg-black dark:bg-white text-white dark:text-black hover:bg-brandGold hover:text-black rounded-full transition-all font-bold text-xs shadow-[0_0_15px_rgba(255,255,255,0.1)] flex items-center gap-1.5 max-w-[140px]">
+                    <i class="fa-brands fa-x-twitter"></i> <span class="truncate">Connect</span>
+                </button>
+
                 <button id="theme-toggle-mobile" class="w-9 h-9 rounded-full bg-gray-200/60 dark:bg-white/5 border border-gray-300 dark:border-white/10 flex items-center justify-center text-gray-800 dark:text-gray-200 text-sm focus:outline-none">
                     <i class="fa-solid fa-moon" id="theme-icon-mobile"></i>
                 </button>
@@ -72,48 +69,29 @@
             </div>
         </div>
 
-        <!-- Mobile Drawer Rediseñado -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white/95 dark:bg-[#070709]/95 backdrop-blur-2xl border-b border-gray-200 dark:border-white/10 absolute w-full left-0 top-full px-6 py-6 transition-all duration-300 z-40">
+        <!-- Mobile Drawer -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white/95 dark:bg-[#070709]/95 backdrop-blur-2xl border-b border-gray-200 dark:border-white/10 absolute w-full left-0 top-full px-6 py-6 transition-all z-40">
             <div class="flex flex-col space-y-2">
-                <a href="index.html#about" class="nav-link mobile-link flex items-center justify-between p-3.5 rounded-xl bg-gray-100/70 dark:bg-white/[0.03] border border-gray-200/80 dark:border-white/5 text-gray-800 dark:text-gray-200 font-semibold text-sm hover:border-brandGold/40 transition-all">
-                    <span class="flex items-center gap-3">
-                        <i class="fa-solid fa-fingerprint text-brandGold w-4 text-center"></i> About ZAZKEE
-                    </span>
+                <a href="index.html#about" class="nav-link mobile-link flex items-center justify-between p-3.5 rounded-xl bg-gray-100/70 dark:bg-white/[0.03] border border-gray-200/80 dark:border-white/5 text-gray-800 dark:text-gray-200 font-semibold text-sm">
+                    <span class="flex items-center gap-3"><i class="fa-solid fa-fingerprint text-brandGold w-4"></i> About ZAZKEE</span>
                     <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
                 </a>
-                <a href="index.html#partnerships" class="nav-link mobile-link flex items-center justify-between p-3.5 rounded-xl bg-gray-100/70 dark:bg-white/[0.03] border border-gray-200/80 dark:border-white/5 text-gray-800 dark:text-gray-200 font-semibold text-sm hover:border-brandGold/40 transition-all">
-                    <span class="flex items-center gap-3">
-                        <i class="fa-solid fa-handshake-simple text-brandGold w-4 text-center"></i> Partnerships
-                    </span>
+                <a href="index.html#partnerships" class="nav-link mobile-link flex items-center justify-between p-3.5 rounded-xl bg-gray-100/70 dark:bg-white/[0.03] border border-gray-200/80 dark:border-white/5 text-gray-800 dark:text-gray-200 font-semibold text-sm">
+                    <span class="flex items-center gap-3"><i class="fa-solid fa-handshake-simple text-brandGold w-4"></i> Partnerships</span>
                     <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
                 </a>
-                <a href="index.html#services" class="nav-link mobile-link flex items-center justify-between p-3.5 rounded-xl bg-gray-100/70 dark:bg-white/[0.03] border border-gray-200/80 dark:border-white/5 text-gray-800 dark:text-gray-200 font-semibold text-sm hover:border-brandGold/40 transition-all">
-                    <span class="flex items-center gap-3">
-                        <i class="fa-solid fa-bolt text-brandGold w-4 text-center"></i> What I Do
-                    </span>
+                <a href="index.html#services" class="nav-link mobile-link flex items-center justify-between p-3.5 rounded-xl bg-gray-100/70 dark:bg-white/[0.03] border border-gray-200/80 dark:border-white/5 text-gray-800 dark:text-gray-200 font-semibold text-sm">
+                    <span class="flex items-center gap-3"><i class="fa-solid fa-bolt text-brandGold w-4"></i> What I Do</span>
                     <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
                 </a>
-                <a href="#" class="mobile-link flex items-center justify-between p-3.5 rounded-xl bg-brandGold/10 border border-brandGold/30 text-brandGold font-bold text-sm shadow-[0_0_15px_rgba(234,179,8,0.15)] transition-all">
-                    <span class="flex items-center gap-3">
-                        <i class="fa-solid fa-gift text-brandGold w-4 text-center"></i> Active Drops
-                    </span>
+                <a href="#" class="mobile-link flex items-center justify-between p-3.5 rounded-xl bg-brandGold/10 border border-brandGold/30 text-brandGold font-bold text-sm shadow-[0_0_15px_rgba(234,179,8,0.15)]">
+                    <span class="flex items-center gap-3"><i class="fa-solid fa-gift text-brandGold w-4"></i> Active Drops</span>
                     <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-brandGold text-black font-extrabold">Live</span>
                 </a>
             </div>
-
-            <!-- Botón Connect X (Mobile) -->
-            <button id="btn-login-x-mobile" class="mt-5 w-full py-3.5 bg-black dark:bg-white text-white dark:text-black font-bold text-center text-sm rounded-xl tracking-wider uppercase shadow-[0_0_20px_rgba(255,255,255,0.1)] flex items-center justify-center gap-2 transition-colors">
-                <i class="fa-brands fa-x-twitter text-lg"></i> Connect X
-            </button>
-
-            <!-- Redes en Móvil al Pie del Menú -->
             <div class="mt-6 pt-5 border-t border-gray-200 dark:border-white/10 flex items-center justify-center gap-6">
-                <a href="https://twitter.com/zazzkeee" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-700 dark:text-gray-300 hover:text-brandGold">
-                    <i class="fa-brands fa-x-twitter text-sm"></i>
-                </a>
-                <a href="https://t.me/zazkestribe" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-700 dark:text-gray-300 hover:text-brandGold">
-                    <i class="fa-brands fa-telegram text-base"></i>
-                </a>
+                <a href="https://twitter.com/zazzkeee" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center hover:text-brandGold"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://t.me/zazkestribe" target="_blank" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center hover:text-brandGold"><i class="fa-brands fa-telegram text-base"></i></a>
             </div>
         </div>
     </nav>
@@ -127,13 +105,26 @@
     <!-- Active Drops Grid (CONTENEDOR DINÁMICO) -->
     <section class="relative z-10 max-w-[1400px] mx-auto px-6 pb-32">
         <div id="dynamic-drops-container" class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl mx-auto">
-            <!-- Loading State Inicial -->
             <div class="col-span-full text-center py-12">
                 <i class="fa-solid fa-spinner fa-spin text-brandGold text-3xl"></i>
                 <p class="mt-4 text-gray-400 font-bold">Scanning blockchain for active drops...</p>
             </div>
         </div>
     </section>
+
+    <!-- MODAL FORMAL DE VERIFICACIÓN (NUEVO) -->
+    <div id="custom-verify-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity px-4">
+        <div class="bg-darker border border-white/10 rounded-2xl p-8 max-w-md w-full shadow-2xl relative">
+            <h3 class="text-2xl font-bold text-white mb-4">Verification Required</h3>
+            <p class="text-gray-400 text-sm mb-8 leading-relaxed">
+                Please confirm that you have completed all mandatory requirements. Incomplete or invalid entries will be automatically discarded during the final audit process.
+            </p>
+            <div class="flex gap-4">
+                <button id="modal-btn-cancel" class="flex-1 py-3 bg-white/5 text-white font-bold rounded-xl hover:bg-white/10 transition-colors border border-white/10">Cancel</button>
+                <button id="modal-btn-confirm" class="flex-1 py-3 bg-brandGold text-black font-bold rounded-xl hover:bg-yellow-400 transition-colors">Verify Entry</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer Simple -->
     <footer class="relative overflow-hidden bg-gray-100 dark:bg-[#020202] border-t border-gray-300 dark:border-white/5 py-12 z-10 transition-colors">
@@ -142,7 +133,6 @@
         </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="js/app.js"></script>
 </body>
