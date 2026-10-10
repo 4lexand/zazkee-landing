@@ -18,16 +18,47 @@ document.addEventListener("DOMContentLoaded", () => {
             if(window.innerWidth >= 1024) { gsap.set('#hero-img', { autoAlpha: 1, x: 0 }); } else { gsap.set('#hero-img', { autoAlpha: 1, y: 0 }); }
             gsap.set('.hero-element', { autoAlpha: 1, y: 0 });
         } else {
-            let count = 0; const fill = document.getElementById('loading-text-fill'); const counter = document.getElementById('loader-counter');
+            let count = 0; 
+            const fill = document.getElementById('loading-text-fill'); 
+            const counter = document.getElementById('loader-counter');
+            const statusText = document.getElementById('loading-status');
+            
+            // Textos dinámicos que aparecerán mientras carga
+            const loadMessages = [
+                "Loading active drops...",
+                "Verifying partnerships...",
+                "Calculating jackpot...",
+                "Securing connection..."
+            ];
+
             if(fill) fill.style.transition = 'width 0.1s linear';
+            
             const interval = setInterval(() => {
-                count += Math.floor(Math.random() * 3) + 1; if (count > 100) count = 100;
-                if(counter) counter.textContent = count; if(fill) fill.style.width = count + '%';
+                count += Math.floor(Math.random() * 3) + 1; 
+                if (count > 100) count = 100;
+                
+                if(counter) counter.textContent = count; 
+                if(fill) fill.style.width = count + '%';
+                
+                // Cambiar el texto según el progreso
+                if(statusText) {
+                    if(count < 25) statusText.textContent = loadMessages[0];
+                    else if(count < 50) statusText.textContent = loadMessages[1];
+                    else if(count < 80) statusText.textContent = loadMessages[2];
+                    else statusText.textContent = loadMessages[3];
+                }
+
                 if (count === 100) {
                     clearInterval(interval);
-                    if(enterBtn) { enterBtn.classList.remove('pointer-events-none'); enterBtn.style.opacity = '1'; enterBtn.style.visibility = 'visible'; }
+                    if(statusText) statusText.textContent = "System Ready";
+                    if(enterBtn) { 
+                        enterBtn.classList.remove('pointer-events-none'); 
+                        enterBtn.style.opacity = '1'; 
+                        enterBtn.style.visibility = 'visible'; 
+                    }
                 }
             }, 30);
+
             if(enterBtn) {
                 enterBtn.addEventListener('click', () => {
                     sessionStorage.setItem('zazkee_visited', 'true');
@@ -43,7 +74,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
         }
-    } else { document.body.style.opacity = '1'; }
+    } else { 
+        document.body.style.opacity = '1'; 
+    }
 
     const menuBtn = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
