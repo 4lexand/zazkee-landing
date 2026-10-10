@@ -451,10 +451,22 @@
                 const currentDropId = document.getElementById('select-audit-drop').value;
                 const currentDrop = window.allDropsData ? window.allDropsData.find(d => d.id === currentDropId) : null;
                 
-                // Si el sorteo tiene un link, lo usamos. Si no, hacemos una búsqueda general de fallback.
-                const tweetUrl = currentDrop && currentDrop.tweet_link ? currentDrop.tweet_link : `https://x.com/search?q=from%3A${winner.username}%20to%3Azazzkeee&src=typed_query`;
+                let auditUrl = `https://x.com/search?q=from%3A${winner.username}%20to%3Azazzkeee`; // Fallback por defecto
                 
-                document.getElementById('link-tweet').href = tweetUrl;
+                if (currentDrop && currentDrop.tweet_link) {
+                    // Extraemos mágicamente el ID numérico del tweet (ej: 1234567890)
+                    const match = currentDrop.tweet_link.match(/status\/(\d+)/);
+                    if (match && match[1]) {
+                        const tweetId = match[1];
+                        // Búsqueda avanzada de X: conversation_id + from:usuario
+                        // Esto filtra en X para mostrar ÚNICAMENTE el comentario de ese ganador en ese tweet
+                        auditUrl = `https://x.com/search?q=conversation_id%3A${tweetId}%20from%3A${winner.username}&f=live`;
+                    } else {
+                        auditUrl = currentDrop.tweet_link; 
+                    }
+                }
+                
+                document.getElementById('link-tweet').href = auditUrl;
 
                 this.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Draw Again';
                 this.style.pointerEvents = 'auto';
