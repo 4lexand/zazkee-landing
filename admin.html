@@ -5,16 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZAZKEE Portal | Secure Admin Terminal</title>
     <link rel="icon" type="image/png" href="favicon.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script>
-        tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Space Grotesk', 'sans-serif'] }, colors: { brandGold: '#EAB308', darker: '#050505' } } } }
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'] },
+                    colors: { brandGold: '#EAB308', darker: '#050505' }
+                }
+            }
+        }
     </script>
 </head>
 <body class="bg-darker text-white font-sans min-h-screen">
     
+    <!-- PANTALLA DE BLOQUEO / SEGURIDAD -->
     <div id="security-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-darker backdrop-blur-md transition-opacity duration-500">
         <div class="text-center p-8 border border-white/10 bg-white/5 rounded-2xl max-w-md w-full shadow-2xl">
             <i class="fa-solid fa-shield-halved text-5xl text-brandGold mb-6"></i>
@@ -26,10 +37,13 @@
         </div>
     </div>
 
+    <!-- PANEL DE CONTROL -->
     <div id="admin-dashboard" class="hidden p-6 md:p-12 max-w-6xl mx-auto">
         <header class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-white/10 pb-6">
             <div>
-                <h1 class="text-3xl font-extrabold tracking-widest text-white mb-2">ZAZKEE <span class="text-brandGold">ADMIN</span></h1>
+                <h1 class="text-3xl font-extrabold tracking-widest text-white mb-2">
+                    ZAZKEE <span class="text-brandGold">ADMIN</span>
+                </h1>
                 <p class="text-gray-400 text-sm">Welcome back, <span id="admin-name" class="text-brandGold font-bold">@admin</span></p>
             </div>
             <button id="btn-logout" class="mt-4 md:mt-0 text-gray-400 hover:text-red-400 text-sm border border-white/10 px-4 py-2 rounded-lg transition-colors">
@@ -37,39 +51,70 @@
             </button>
         </header>
 
+        <!-- NAVEGACIÓN DE 3 PESTAÑAS -->
         <div class="flex flex-col md:flex-row gap-4 mb-8">
-            <button id="tab-draw" class="flex-1 py-3 bg-brandGold text-black font-bold rounded-lg border border-brandGold transition-colors"><i class="fa-solid fa-dice mr-2"></i> Audit & Draw</button>
-            <button id="tab-manage" class="flex-1 py-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold rounded-lg border border-white/10 transition-colors"><i class="fa-solid fa-list-check mr-2"></i> Manage Drops</button>
-            <button id="tab-create" class="flex-1 py-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold rounded-lg border border-white/10 transition-colors"><i class="fa-solid fa-plus mr-2"></i> Create Drop</button>
+            <button id="tab-draw" class="flex-1 py-3 bg-brandGold text-black font-bold rounded-lg border border-brandGold transition-colors">
+                <i class="fa-solid fa-dice mr-2"></i> Audit & Draw
+            </button>
+            <button id="tab-manage" class="flex-1 py-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold rounded-lg border border-white/10 transition-colors">
+                <i class="fa-solid fa-list-check mr-2"></i> Manage Drops
+            </button>
+            <button id="tab-create" class="flex-1 py-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold rounded-lg border border-white/10 transition-colors">
+                <i class="fa-solid fa-plus mr-2"></i> Create Drop
+            </button>
         </div>
 
-        <!-- SECCIÓN 1: AUDIT & DRAW -->
+        <!-- SECCIÓN 1: SORTEOS Y AUDITORÍA -->
         <div id="section-draw" class="block">
             <section class="mb-12 bg-white/5 border border-brandGold/30 rounded-2xl p-8 text-center relative overflow-hidden">
-                <div class="absolute top-4 right-4 bg-black border border-white/10 px-4 py-2 rounded-lg"><span class="text-gray-400 text-xs uppercase block">Total Entries</span><span id="total-count" class="text-xl font-bold text-brandGold">0</span></div>
+                <div class="absolute top-4 right-4 bg-black border border-white/10 px-4 py-2 rounded-lg">
+                    <span class="text-gray-400 text-xs uppercase block">Total Entries</span>
+                    <span id="total-count" class="text-xl font-bold text-brandGold">0</span>
+                </div>
+                
                 <h2 class="text-xl font-bold mb-2">Ready to pick a winner?</h2>
-                <div class="max-w-xs mx-auto mb-6"><select id="select-audit-drop" class="w-full bg-black border border-white/20 text-white rounded-lg p-2 outline-none"></select></div>
-                <button id="btn-draw" class="px-8 py-4 bg-brandGold text-black font-bold text-lg rounded-xl hover:bg-yellow-400 transition-all"><i class="fa-solid fa-dice mr-2"></i> Draw Random Winner</button>
+                
+                <div class="max-w-xs mx-auto mb-6">
+                    <select id="select-audit-drop" class="w-full bg-black border border-white/20 text-white rounded-lg p-2 outline-none"></select>
+                </div>
 
+                <button id="btn-draw" class="px-8 py-4 bg-brandGold text-black font-bold text-lg rounded-xl hover:bg-yellow-400 transition-all shadow-[0_0_20px_rgba(234,179,8,0.2)]">
+                    <i class="fa-solid fa-dice mr-2"></i> Draw Random Winner
+                </button>
+
+                <!-- Tarjeta del Ganador -->
                 <div id="winner-card" class="hidden mt-8 pt-8 border-t border-white/10">
                     <p class="text-sm text-gray-400 uppercase tracking-widest mb-2">🎉 Winner Selected 🎉</p>
                     <div class="text-4xl md:text-5xl font-extrabold text-brandGold mb-6" id="winner-username">@username</div>
+                    
                     <div class="bg-black/50 rounded-xl p-6 max-w-lg mx-auto border border-white/5">
                         <p class="text-sm text-gray-300 mb-4"><i class="fa-solid fa-shield-halved text-brandGold"></i> Manual Audit Required:</p>
                         <div class="flex flex-col gap-3">
-                            <a id="link-profile" href="#" target="_blank" class="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm font-semibold flex justify-between px-4"><span>1. Check Profile</span><i class="fa-solid fa-arrow-up-right-from-square text-gray-400"></i></a>
-                            <a id="link-tweet" href="#" target="_blank" class="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm font-semibold flex justify-between px-4"><span>2. Check Tweet Activity</span><i class="fa-brands fa-x-twitter text-gray-400"></i></a>
+                            <a id="link-profile" href="#" target="_blank" class="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm font-semibold transition-colors flex justify-between items-center px-4">
+                                <span>1. Check Profile</span><i class="fa-solid fa-arrow-up-right-from-square text-gray-400"></i>
+                            </a>
+                            <a id="link-tweet" href="#" target="_blank" class="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm font-semibold transition-colors flex justify-between items-center px-4">
+                                <span>2. Check Tweet Activity</span><i class="fa-brands fa-x-twitter text-gray-400"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
             </section>
+
+            <!-- Participantes en vivo -->
             <h3 class="text-lg font-bold mb-4 text-gray-300"><i class="fa-solid fa-users text-brandGold mr-2"></i> Live Participant Log</h3>
             <div class="bg-white/5 border border-white/10 rounded-xl overflow-x-auto">
                 <table class="w-full text-left text-sm">
                     <thead class="bg-white/5 border-b border-white/10 text-gray-400 uppercase tracking-wider text-xs">
-                        <tr><th class="p-4 font-medium">Username</th><th class="p-4 font-medium">Drop ID</th><th class="p-4 font-medium">Timestamp (UTC)</th></tr>
+                        <tr>
+                            <th class="p-4 font-medium">Username</th>
+                            <th class="p-4 font-medium">Drop ID</th>
+                            <th class="p-4 font-medium">Timestamp (UTC)</th>
+                        </tr>
                     </thead>
-                    <tbody id="participants-table" class="divide-y divide-white/5 text-gray-200"><tr><td colspan="3" class="p-6 text-center text-gray-500">Loading data...</td></tr></tbody>
+                    <tbody id="participants-table" class="divide-y divide-white/5 text-gray-200">
+                        <tr><td colspan="3" class="p-6 text-center text-gray-500">Loading data...</td></tr>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -78,12 +123,21 @@
         <div id="section-manage" class="hidden">
             <div class="bg-white/5 border border-white/10 rounded-2xl p-8">
                 <h2 class="text-2xl font-bold mb-6 border-b border-white/10 pb-4"><i class="fa-solid fa-server text-brandGold mr-2"></i> Database Configuration</h2>
+                
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
                         <thead class="bg-white/5 border-b border-white/10 text-gray-400 uppercase tracking-wider text-xs">
-                            <tr><th class="p-4">Internal ID</th><th class="p-4">Title</th><th class="p-4">Type</th><th class="p-4">Status/Expiry</th><th class="p-4 text-right">Actions</th></tr>
+                            <tr>
+                                <th class="p-4 font-medium">Internal ID</th>
+                                <th class="p-4 font-medium">Title</th>
+                                <th class="p-4 font-medium">Type</th>
+                                <th class="p-4 font-medium">Status/Expiry</th>
+                                <th class="p-4 font-medium text-right">Actions</th>
+                            </tr>
                         </thead>
-                        <tbody id="manage-drops-table" class="divide-y divide-white/5 text-gray-200"><tr><td colspan="5" class="p-6 text-center text-gray-500">Loading drops...</td></tr></tbody>
+                        <tbody id="manage-drops-table" class="divide-y divide-white/5 text-gray-200">
+                            <tr><td colspan="5" class="p-6 text-center text-gray-500">Loading drops...</td></tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -98,17 +152,19 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm text-gray-400 mb-2">Drop Internal ID</label>
-                            <input type="text" id="drop-id" class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-brandGold disabled:opacity-50" required>
+                            <input type="text" id="drop-id" placeholder="e.g., drop_500_usdc" class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-brandGold disabled:opacity-50" required>
                         </div>
                         <div>
                             <label class="block text-sm text-gray-400 mb-2">Duration (Days)</label>
-                            <input type="number" id="drop-duration" value="7" class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-brandGold" required>
+                            <input type="number" id="drop-duration" placeholder="e.g., 5" min="1" value="7" class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-brandGold" required>
                         </div>
                     </div>
+                    
                     <div>
                         <label class="block text-sm text-gray-400 mb-2">Display Title</label>
-                        <input type="text" id="drop-title" class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-brandGold" required>
+                        <input type="text" id="drop-title" placeholder="e.g., 500 USDC Massive Giveaway" class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-brandGold" required>
                     </div>
+
                     <div>
                         <label class="block text-sm text-gray-400 mb-2">Drop Type</label>
                         <select id="drop-type" class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-brandGold">
@@ -117,9 +173,13 @@
                         </select>
                     </div>
 
-                    <!-- Campos Tareas Sociales (NUEVO) -->
+                    <!-- Campos Tareas Sociales -->
                     <div id="social-fields" class="space-y-4 bg-black/40 p-6 rounded-xl border border-white/10">
                         <h4 class="text-sm font-bold text-brandGold uppercase tracking-wider mb-2"><i class="fa-solid fa-user-plus mr-2"></i>Social Configuration</h4>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Target Tweet URL (Mandatory for Social Tasks)</label>
+                            <input type="url" id="drop-tweet" placeholder="https://x.com/zazzkeee/status/..." class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-brandGold">
+                        </div>
                         <div>
                             <label class="block text-xs text-gray-400 mb-1">Additional Account to Follow (Optional)</label>
                             <input type="text" id="drop-sponsor" placeholder="e.g. @solana" class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-brandGold">
@@ -131,18 +191,24 @@
                         <h4 class="text-sm font-bold text-[#00ff88] uppercase tracking-wider mb-2"><i class="fa-solid fa-key mr-2"></i>Code Configuration</h4>
                         <div>
                             <label class="block text-xs text-gray-400 mb-1">Secret Code</label>
-                            <input type="text" id="drop-code" class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-[#00ff88]">
+                            <input type="text" id="drop-code" placeholder="e.g., ZAZZKE" class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-[#00ff88]">
                         </div>
                         <div>
                             <label class="block text-xs text-gray-400 mb-1">Partner URL (Optional)</label>
-                            <input type="url" id="drop-url" class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-[#00ff88]">
+                            <input type="url" id="drop-url" placeholder="https://..." class="w-full bg-black border border-white/20 rounded-lg p-3 text-white outline-none focus:border-[#00ff88]">
                         </div>
                     </div>
 
-                    <button type="submit" id="btn-submit-drop" class="w-full py-4 bg-brandGold text-black font-bold text-lg rounded-xl hover:bg-yellow-400 transition-all mt-4">Activate Drop to Database</button>
-                    <button type="button" id="btn-cancel-edit" class="hidden w-full py-4 bg-white/5 text-white font-bold text-lg rounded-xl hover:bg-white/10 border border-white/10 transition-all mt-2">Cancel Edit</button>
+                    <button type="submit" id="btn-submit-drop" class="w-full py-4 bg-brandGold text-black font-bold text-lg rounded-xl hover:bg-yellow-400 transition-all shadow-[0_0_15px_rgba(234,179,8,0.2)] mt-4">
+                        Activate Drop to Database
+                    </button>
+                    <button type="button" id="btn-cancel-edit" class="hidden w-full py-4 bg-white/5 text-white font-bold text-lg rounded-xl hover:bg-white/10 border border-white/10 transition-all mt-2">
+                        Cancel Edit
+                    </button>
                 </form>
-                <div id="drop-success-msg" class="hidden mt-4 p-4 bg-green-500/20 text-green-400 border border-green-500/50 rounded-lg text-center"><i class="fa-solid fa-check-circle mr-2"></i> Operation successful!</div>
+                <div id="drop-success-msg" class="hidden mt-4 p-4 bg-green-500/20 text-green-400 border border-green-500/50 rounded-lg text-center">
+                    <i class="fa-solid fa-check-circle mr-2"></i> Operation successful!
+                </div>
             </div>
         </div>
     </div>
@@ -151,37 +217,59 @@
         const supabaseUrl = "https://yhggkrhppvimfikiylbp.supabase.co"; 
         const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InloZ2drcmhwcHZpbWZpa2l5bGJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0ODAwNjcsImV4cCI6MjEwNzA1NjA2N30.fmj-5oeYlFNcg7hKeGpDzjAOpmV4AP6p7GiH0OirZls"; 
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
         const ADMIN_USERS = ['4lexx07', 'zazzkeee']; 
         let editModeId = null; 
+        window.allDropsData = []; // Guardaremos los sorteos aquí para usarlos luego
         
         async function verifyAdminAccess() {
             const { data: { session } } = await supabaseClient.auth.getSession();
-            if (!session) { document.getElementById('security-msg').textContent = "Admin authorization required."; document.getElementById('btn-admin-login').classList.remove('hidden'); return; }
+            if (!session) {
+                document.getElementById('security-msg').textContent = "Admin authorization required.";
+                document.getElementById('btn-admin-login').classList.remove('hidden');
+                return;
+            }
             const username = (session.user.user_metadata.user_name || session.user.user_metadata.preferred_username || "").toLowerCase();
             if (ADMIN_USERS.includes(username)) {
-                document.getElementById('security-screen').style.display = 'none'; document.getElementById('admin-dashboard').classList.remove('hidden'); document.getElementById('admin-name').textContent = `@${username}`;
+                document.getElementById('security-screen').style.display = 'none';
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                document.getElementById('admin-name').textContent = `@${username}`;
                 loadActiveDrops(); 
             } else {
-                document.getElementById('security-msg').innerHTML = `<span class="text-red-500 font-bold">ACCESS DENIED</span><br>@${username} is not an admin.`; document.getElementById('btn-admin-login').classList.remove('hidden');
+                document.getElementById('security-msg').innerHTML = `<span class="text-red-500 font-bold">ACCESS DENIED</span><br>@${username} is not an admin.`;
+                document.getElementById('btn-admin-login').classList.remove('hidden');
                 document.getElementById('btn-admin-login').onclick = async () => { await supabaseClient.auth.signOut(); window.location.reload(); };
             }
         }
-        document.getElementById('btn-admin-login').addEventListener('click', async () => { await supabaseClient.auth.signInWithOAuth({ provider: 'x', options: { redirectTo: window.location.origin + '/admin.html' } }); });
+
+        // REDIRECCIÓN DIRECTA Y LIMPIA A ZAZKEE.XYZ
+        document.getElementById('btn-admin-login').addEventListener('click', async () => {
+            await supabaseClient.auth.signInWithOAuth({ 
+                provider: 'x', 
+                options: { redirectTo: 'https://zazkee.xyz/admin' } 
+            });
+        });
+
         document.getElementById('btn-logout').addEventListener('click', async () => { await supabaseClient.auth.signOut(); window.location.reload(); });
         verifyAdminAccess();
 
         function switchTab(activeId) {
             ['draw', 'manage', 'create'].forEach(tab => {
-                const btn = document.getElementById(`tab-${tab}`); const sec = document.getElementById(`section-${tab}`);
-                if(tab === activeId) { btn.className = "flex-1 py-3 bg-brandGold text-black font-bold rounded-lg border border-brandGold transition-colors"; sec.classList.remove('hidden'); } 
-                else { btn.className = "flex-1 py-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold rounded-lg border border-white/10 transition-colors"; sec.classList.add('hidden'); }
+                const btn = document.getElementById(`tab-${tab}`);
+                const sec = document.getElementById(`section-${tab}`);
+                if(tab === activeId) {
+                    btn.className = "flex-1 py-3 bg-brandGold text-black font-bold rounded-lg border border-brandGold transition-colors";
+                    sec.classList.remove('hidden');
+                } else {
+                    btn.className = "flex-1 py-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold rounded-lg border border-white/10 transition-colors";
+                    sec.classList.add('hidden');
+                }
             });
         }
         document.getElementById('tab-draw').addEventListener('click', () => switchTab('draw'));
         document.getElementById('tab-manage').addEventListener('click', () => switchTab('manage'));
         document.getElementById('tab-create').addEventListener('click', () => { resetForm(); switchTab('create'); });
 
-        // Toggles visuales de los campos
         document.getElementById('drop-type').addEventListener('change', function() {
             if(this.value === 'code') {
                 document.getElementById('code-fields').classList.remove('hidden');
@@ -194,27 +282,36 @@
             }
         });
 
-        // Cargar Datos
         let activeEntries = [];
         async function loadActiveDrops() {
             const { data } = await supabaseClient.from('drops').select('*').order('created_at', { ascending: false });
+            
+            window.allDropsData = data; // Guardamos en memoria
+
             if (data && data.length > 0) {
                 const selector = document.getElementById('select-audit-drop');
                 selector.innerHTML = data.map(d => `<option value="${d.id}">${d.title} (${d.drop_type})</option>`).join('');
                 selector.addEventListener('change', (e) => fetchEntries(e.target.value));
                 fetchEntries(selector.value);
             }
+
             const manageTbody = document.getElementById('manage-drops-table');
-            if (!data || data.length === 0) { manageTbody.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-gray-500">No drops found in database.</td></tr>'; } 
-            else {
+            if (!data || data.length === 0) {
+                manageTbody.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-gray-500">No drops found in database.</td></tr>';
+            } else {
                 manageTbody.innerHTML = data.map(d => {
                     const isExpired = new Date(d.expires_at) < new Date();
                     const statusBadge = isExpired ? `<span class="text-red-400 text-xs bg-red-400/10 px-2 py-1 rounded font-bold">Expired</span>` : `<span class="text-green-400 text-xs bg-green-400/10 px-2 py-1 rounded font-bold">Active</span>`;
                     return `
                     <tr class="hover:bg-white/5 border-b border-white/5 transition-colors">
-                        <td class="p-4 font-mono text-gray-300 text-xs">${d.id}</td><td class="p-4 font-bold text-white">${d.title}</td><td class="p-4 text-gray-400 uppercase text-xs">${d.drop_type}</td>
+                        <td class="p-4 font-mono text-gray-300 text-xs">${d.id}</td>
+                        <td class="p-4 font-bold text-white">${d.title}</td>
+                        <td class="p-4 text-gray-400 uppercase text-xs">${d.drop_type}</td>
                         <td class="p-4 text-gray-400 text-xs">${new Date(d.expires_at).toLocaleDateString()} <br> ${statusBadge}</td>
-                        <td class="p-4 text-right"><button onclick="editDrop('${d.id}')" class="text-brandGold hover:text-yellow-300 mr-4"><i class="fa-solid fa-pen"></i></button><button onclick="deleteDrop('${d.id}')" class="text-red-500 hover:text-red-400"><i class="fa-solid fa-trash"></i></button></td>
+                        <td class="p-4 text-right">
+                            <button onclick="editDrop('${d.id}')" class="text-brandGold hover:text-yellow-300 mr-4 transition-colors"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteDrop('${d.id}')" class="text-red-500 hover:text-red-400 transition-colors"><i class="fa-solid fa-trash"></i></button>
+                        </td>
                     </tr>`;
                 }).join('');
             }
@@ -222,89 +319,148 @@
 
         async function fetchEntries(dropId) {
             const { data } = await supabaseClient.from('drop_entries').select('*').eq('drop_id', dropId).order('created_at', { ascending: false });
-            activeEntries = data || []; document.getElementById('total-count').textContent = activeEntries.length;
+            activeEntries = data || [];
+            document.getElementById('total-count').textContent = activeEntries.length;
             const tbody = document.getElementById('participants-table');
-            if (activeEntries.length === 0) { tbody.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-gray-500">No participants yet.</td></tr>'; return; }
-            tbody.innerHTML = activeEntries.map(entry => `<tr class="hover:bg-white/5 border-b border-white/5"><td class="p-4 font-bold text-white">@${entry.username}</td><td class="p-4 text-xs text-gray-400">${entry.drop_id}</td><td class="p-4 text-gray-400 text-xs">${new Date(entry.created_at).toLocaleString()}</td></tr>`).join('');
+            if (activeEntries.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-gray-500">No participants yet.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = activeEntries.map(entry => `
+                <tr class="hover:bg-white/5 border-b border-white/5">
+                    <td class="p-4 font-bold text-white">@${entry.username}</td>
+                    <td class="p-4 text-xs text-gray-400">${entry.drop_id}</td>
+                    <td class="p-4 text-gray-400 text-xs">${new Date(entry.created_at).toLocaleString()}</td>
+                </tr>
+            `).join('');
         }
 
         window.deleteDrop = async (id) => {
             if (!confirm(`Are you absolutely sure you want to delete "${id}"?`)) return;
             await supabaseClient.from('drop_entries').delete().eq('drop_id', id);
             const { error } = await supabaseClient.from('drops').delete().eq('id', id);
-            if (error) alert("Error deleting: " + error.message); else loadActiveDrops(); 
+            if (error) alert("Error deleting: " + error.message);
+            else loadActiveDrops(); 
         };
 
         window.editDrop = async (id) => {
             const { data } = await supabaseClient.from('drops').select('*').eq('id', id).single();
             if(!data) return;
+
             editModeId = id; 
-            document.getElementById('drop-id').value = data.id; document.getElementById('drop-id').disabled = true; 
-            document.getElementById('drop-title').value = data.title; document.getElementById('drop-type').value = data.drop_type;
-            const diffDays = Math.max(1, Math.ceil((new Date(data.expires_at) - new Date()) / (1000 * 60 * 60 * 24)));
+            
+            document.getElementById('drop-id').value = data.id;
+            document.getElementById('drop-id').disabled = true; 
+            document.getElementById('drop-title').value = data.title;
+            document.getElementById('drop-type').value = data.drop_type;
+            
+            const diffTime = new Date(data.expires_at) - new Date();
+            const diffDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
             document.getElementById('drop-duration').value = diffDays;
             
             document.getElementById('drop-type').dispatchEvent(new Event('change'));
             
-            if(data.drop_type === 'social') document.getElementById('drop-sponsor').value = data.bonus_follow || '';
-            else if(data.drop_type === 'code') { document.getElementById('drop-code').value = data.secret_code || ''; document.getElementById('drop-url').value = data.claim_url || ''; }
+            if(data.drop_type === 'social') {
+                document.getElementById('drop-sponsor').value = data.bonus_follow || '';
+                document.getElementById('drop-tweet').value = data.tweet_link || ''; // Llenamos el link del tweet
+            } else if(data.drop_type === 'code') {
+                document.getElementById('drop-code').value = data.secret_code || '';
+                document.getElementById('drop-url').value = data.claim_url || '';
+            }
 
             document.getElementById('form-title').innerHTML = '<i class="fa-solid fa-pen text-brandGold mr-2"></i> Edit Giveaway';
             document.getElementById('btn-submit-drop').innerHTML = '<i class="fa-solid fa-cloud-arrow-up mr-2"></i> Update Drop Data';
             document.getElementById('btn-cancel-edit').classList.remove('hidden');
+
             switchTab('create'); 
         };
 
         document.getElementById('btn-cancel-edit').addEventListener('click', resetForm);
 
         function resetForm() {
-            editModeId = null; document.getElementById('form-create-drop').reset(); document.getElementById('drop-id').disabled = false;
+            editModeId = null;
+            document.getElementById('form-create-drop').reset();
+            document.getElementById('drop-id').disabled = false;
             document.getElementById('drop-type').dispatchEvent(new Event('change'));
             document.getElementById('form-title').innerHTML = '<i class="fa-solid fa-rocket text-brandGold mr-2"></i> Launch New Giveaway';
-            document.getElementById('btn-submit-drop').innerHTML = 'Activate Drop to Database'; document.getElementById('btn-cancel-edit').classList.add('hidden');
+            document.getElementById('btn-submit-drop').innerHTML = 'Activate Drop to Database';
+            document.getElementById('btn-cancel-edit').classList.add('hidden');
             switchTab('manage');
         }
 
         document.getElementById('form-create-drop').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btn-submit-drop'); const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...'; btn.disabled = true;
+            const btn = document.getElementById('btn-submit-drop');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+            btn.disabled = true;
 
             const type = document.getElementById('drop-type').value;
             const days = parseInt(document.getElementById('drop-duration').value);
-            const expiresAt = new Date(); expiresAt.setDate(expiresAt.getDate() + days);
+            
+            const expiresAt = new Date();
+            expiresAt.setDate(expiresAt.getDate() + days);
 
             let sponsorRaw = type === 'social' ? document.getElementById('drop-sponsor').value.trim() : null;
-            if (sponsorRaw && !sponsorRaw.startsWith('@')) sponsorRaw = '@' + sponsorRaw; // Asegura que lleve el arroba
+            if (sponsorRaw && !sponsorRaw.startsWith('@')) sponsorRaw = '@' + sponsorRaw;
 
             const dropData = {
                 title: document.getElementById('drop-title').value.trim(),
                 drop_type: type,
                 expires_at: expiresAt.toISOString(),
                 bonus_follow: sponsorRaw,
+                tweet_link: type === 'social' ? document.getElementById('drop-tweet').value.trim() : null, // Guardamos el link
                 secret_code: type === 'code' ? document.getElementById('drop-code').value.trim() : null,
                 claim_url: type === 'code' ? document.getElementById('drop-url').value.trim() : null
             };
 
             let error;
-            if (editModeId) { const res = await supabaseClient.from('drops').update(dropData).eq('id', editModeId); error = res.error; } 
-            else { dropData.id = document.getElementById('drop-id').value.trim(); const res = await supabaseClient.from('drops').insert([dropData]); error = res.error; }
+            if (editModeId) {
+                const response = await supabaseClient.from('drops').update(dropData).eq('id', editModeId);
+                error = response.error;
+            } else {
+                dropData.id = document.getElementById('drop-id').value.trim();
+                const response = await supabaseClient.from('drops').insert([dropData]);
+                error = response.error;
+            }
 
-            btn.innerHTML = originalText; btn.disabled = false;
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+
             if (error) alert("Database Error: " + error.message);
-            else { document.getElementById('drop-success-msg').classList.remove('hidden'); setTimeout(() => document.getElementById('drop-success-msg').classList.add('hidden'), 4000); resetForm(); loadActiveDrops(); }
+            else {
+                document.getElementById('drop-success-msg').classList.remove('hidden');
+                setTimeout(() => document.getElementById('drop-success-msg').classList.add('hidden'), 4000);
+                resetForm();
+                loadActiveDrops();
+            }
         });
 
         document.getElementById('btn-draw').addEventListener('click', function() {
             if (activeEntries.length === 0) return alert("No participants yet.");
-            this.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Calculating...'; this.style.pointerEvents = 'none';
+            this.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Calculating...';
+            this.style.pointerEvents = 'none';
+            
             setTimeout(() => {
                 const winner = activeEntries[Math.floor(Math.random() * activeEntries.length)];
-                document.getElementById('winner-card').classList.remove('hidden'); document.getElementById('winner-username').textContent = `@${winner.username}`;
-                document.getElementById('link-profile').href = `https://x.com/${winner.username}`; document.getElementById('link-tweet').href = `https://x.com/search?q=from%3A${winner.username}%20to%3Azazzkeee&src=typed_query`;
-                this.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Draw Again'; this.style.pointerEvents = 'auto';
+                document.getElementById('winner-card').classList.remove('hidden');
+                document.getElementById('winner-username').textContent = `@${winner.username}`;
+                document.getElementById('link-profile').href = `https://x.com/${winner.username}`;
+                
+                // Extraer el enlace del tweet dinámico del sorteo seleccionado
+                const currentDropId = document.getElementById('select-audit-drop').value;
+                const currentDrop = window.allDropsData ? window.allDropsData.find(d => d.id === currentDropId) : null;
+                
+                // Si el sorteo tiene un link, lo usamos. Si no, hacemos una búsqueda general de fallback.
+                const tweetUrl = currentDrop && currentDrop.tweet_link ? currentDrop.tweet_link : `https://x.com/search?q=from%3A${winner.username}%20to%3Azazzkeee&src=typed_query`;
+                
+                document.getElementById('link-tweet').href = tweetUrl;
+
+                this.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Draw Again';
+                this.style.pointerEvents = 'auto';
             }, 1000);
         });
+
     </script>
 </body>
 </html>
