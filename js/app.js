@@ -1,3 +1,4 @@
+// FORZAR DESBLOQUEO MAESTRO DEL SCROLL
 document.documentElement.style.setProperty('overflow-y', 'auto', 'important');
 document.documentElement.style.setProperty('height', 'auto', 'important');
 document.body.style.setProperty('overflow-y', 'auto', 'important');
@@ -84,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // =========================================================
-    // SUPABASE & DINAMISMO
+    // SUPABASE & DINAMISMO (IMÁGENES LIMPIAS SIN SOMBREADO)
     // =========================================================
     if (typeof window.supabase !== 'undefined') {
         const supabaseUrl = "https://yhggkrhppvimfikiylbp.supabase.co"; 
@@ -98,7 +99,6 @@ document.addEventListener("DOMContentLoaded", () => {
             await supabase.auth.signInWithOAuth({ provider: 'x', options: { redirectTo: window.location.origin + '/giveaways.html' } });
         }
 
-        // UI del Login (Desktop y Móvil)
         function updateLoginUI(session) {
             const username = session ? (session.user.user_metadata.user_name || session.user.user_metadata.preferred_username) : null;
             
@@ -132,49 +132,53 @@ document.addEventListener("DOMContentLoaded", () => {
                 const daysText = diffDays === 1 ? 'Ends in 1 day' : `Ends in ${diffDays} days`;
 
                 if (drop.drop_type === 'social') {
-                    // Lógica para añadir sponsor al texto
                     let followText = `Follow @zazzkeee`;
                     if (drop.bonus_follow && drop.bonus_follow !== '') {
                         followText = `Follow @zazzkeee & ${drop.bonus_follow}`;
                     }
 
                     return `
-                    <div class="bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-brandGold/50 transition-all relative group flex flex-col h-full">
+                    <div class="bg-white/80 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-2xl p-8 hover:border-brandGold/50 transition-all relative group flex flex-col h-full shadow-xl dark:shadow-none">
                         <div class="absolute top-4 right-4 bg-brandGold/20 text-brandGold text-xs px-3 py-1 rounded border border-brandGold/30 uppercase font-bold tracking-wider">Social Task</div>
                         <div class="w-16 h-16 mb-6">
-                            <img src="giveaway.png" alt="Giveaway" class="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(234,179,8,0.4)] group-hover:scale-110 transition-transform">
+                            <!-- IMAGEN LIMPIA SIN DROP-SHADOW -->
+                            <img src="giveaway.png" alt="Giveaway" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
                         </div>
-                        <h3 class="text-2xl font-bold mb-1 text-white">${drop.title}</h3>
-                        <p class="text-xs text-gray-400 mb-4 font-bold tracking-wider text-brandGold"><i class="fa-regular fa-clock mr-1"></i> ${daysText}</p>
+                        <h3 class="text-2xl font-bold mb-1 text-gray-900 dark:text-white">${drop.title}</h3>
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-4 font-bold tracking-wider text-brandGold"><i class="fa-regular fa-clock mr-1"></i> ${daysText}</p>
                         
-                        <div class="space-y-3 mb-4 flex-grow bg-black/40 p-5 rounded-xl border border-white/5">
+                        <div class="space-y-3 mb-4 flex-grow bg-gray-100/80 dark:bg-black/40 p-5 rounded-xl border border-gray-200 dark:border-white/5">
                             <p class="text-xs text-gray-500 uppercase tracking-wider mb-1 font-bold">Requirements:</p>
-                            <div class="flex items-start text-sm text-gray-300"><i class="fa-solid fa-circle text-[6px] text-brandGold mt-1.5 mr-3"></i> ${followText}</div>
-                            <div class="flex items-start text-sm text-gray-300"><i class="fa-solid fa-circle text-[6px] text-brandGold mt-1.5 mr-3"></i> Like, Repost & Tag a friend</div>
+                            <div class="flex items-start text-sm text-gray-700 dark:text-gray-300"><i class="fa-solid fa-circle text-[6px] text-brandGold mt-1.5 mr-3"></i> ${followText}</div>
+                            <div class="flex items-start text-sm text-gray-700 dark:text-gray-300"><i class="fa-solid fa-circle text-[6px] text-brandGold mt-1.5 mr-3"></i> Like, Repost & Tag a friend</div>
                         </div>
+                        
+                        <p class="text-[11px] text-gray-500 mb-3 text-center uppercase tracking-widest w-full">⚠️ Complete tasks before verifying</p>
                         
                         <button class="btn-participate-dynamic w-full py-4 bg-brandGold text-black font-bold text-lg rounded-xl hover:bg-yellow-400 transition-all shadow-[0_0_15px_rgba(234,179,8,0.15)] group-hover:shadow-[0_0_20px_rgba(234,179,8,0.3)]" data-drop-id="${drop.id}">
                             Verify & Participate
                         </button>
                     </div>`;
                 } else if (drop.drop_type === 'code') {
-                    const linkButton = drop.claim_url ? `<a href="${drop.claim_url}" target="_blank" class="w-full flex justify-center items-center py-4 mt-4 bg-white/5 text-white font-bold text-lg rounded-xl hover:bg-white/10 border border-white/20 transition-all"><i class="fa-solid fa-arrow-up-right-from-square mr-2"></i> Partner Link</a>` : '';
+                    const linkButton = drop.claim_url ? `<a href="${drop.claim_url}" target="_blank" class="w-full flex justify-center items-center py-4 mt-4 bg-gray-900 dark:bg-white/5 text-white font-bold text-lg rounded-xl hover:bg-black dark:hover:bg-white/10 border border-transparent dark:border-white/20 transition-all"><i class="fa-solid fa-arrow-up-right-from-square mr-2"></i> Partner Link</a>` : '';
+                    
                     return `
-                    <div class="bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-[#00ff88]/50 transition-all relative group flex flex-col h-full">
-                        <div class="absolute top-4 right-4 bg-[#00ff88]/20 text-[#00ff88] text-xs px-3 py-1 rounded border border-[#00ff88]/30 uppercase font-bold tracking-wider">Partner Code</div>
+                    <div class="bg-white/80 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-2xl p-8 hover:border-[#00ff88]/50 transition-all relative group flex flex-col h-full shadow-xl dark:shadow-none">
+                        <div class="absolute top-4 right-4 bg-[#00ff88]/20 text-[#00c868] dark:text-[#00ff88] text-xs px-3 py-1 rounded border border-[#00c868]/30 dark:border-[#00ff88]/30 uppercase font-bold tracking-wider">Partner Code</div>
                         <div class="w-16 h-16 mb-6">
-                            <img src="code.png" alt="Code" class="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(0,255,136,0.4)] group-hover:scale-110 transition-transform">
+                            <!-- IMAGEN LIMPIA SIN DROP-SHADOW -->
+                            <img src="code.png" alt="Code" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
                         </div>
-                        <h3 class="text-2xl font-bold mb-1 text-white">${drop.title}</h3>
-                        <p class="text-xs text-gray-400 mb-4 font-bold tracking-wider text-[#00ff88]"><i class="fa-regular fa-clock mr-1"></i> ${daysText}</p>
-                        <p class="text-sm text-gray-400 mb-6 flex-grow">Claim your exclusive partner code and use it to get rewards.</p>
+                        <h3 class="text-2xl font-bold mb-1 text-gray-900 dark:text-white">${drop.title}</h3>
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-4 font-bold tracking-wider text-[#00c868] dark:text-[#00ff88]"><i class="fa-regular fa-clock mr-1"></i> ${daysText}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-6 flex-grow">Claim your exclusive partner code and use it to get rewards.</p>
                         
-                        <button class="btn-reveal-code w-full py-4 bg-white/10 text-white font-bold text-lg rounded-xl hover:bg-white/20 border border-white/20 transition-all" data-target="reveal-box-${drop.id}">Claim Drop</button>
+                        <button class="btn-reveal-code w-full py-4 bg-gray-900 dark:bg-white/10 text-white font-bold text-lg rounded-xl hover:bg-black dark:hover:bg-white/20 border border-transparent dark:border-white/20 transition-all" data-target="reveal-box-${drop.id}">Claim Drop</button>
 
                         <div id="reveal-box-${drop.id}" class="hidden flex-col w-full">
-                            <div class="bg-black border border-dashed border-[#00ff88]/50 rounded-xl p-4 flex justify-between items-center mb-2">
-                                <span class="text-[#00ff88] font-mono font-bold text-xl tracking-widest">${drop.secret_code || 'N/A'}</span>
-                                <button class="text-gray-400 hover:text-white transition-colors btn-copy-code p-2" data-clipboard="${drop.secret_code}"><i class="fa-regular fa-copy"></i></button>
+                            <div class="bg-gray-100 dark:bg-black border border-dashed border-[#00c868]/50 dark:border-[#00ff88]/50 rounded-xl p-4 flex justify-between items-center mb-2">
+                                <span class="text-[#00c868] dark:text-[#00ff88] font-mono font-bold text-xl tracking-widest">${drop.secret_code || 'N/A'}</span>
+                                <button class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors btn-copy-code p-2" data-clipboard="${drop.secret_code}"><i class="fa-regular fa-copy"></i></button>
                             </div>
                             ${linkButton}
                         </div>
@@ -185,7 +189,6 @@ document.addEventListener("DOMContentLoaded", () => {
             attachDynamicListeners();
         }
 
-        // LÓGICA DEL MODAL FORMAL
         function showVerifyModal(onConfirm) {
             const modal = document.getElementById('custom-verify-modal');
             const btnCancel = document.getElementById('modal-btn-cancel');
@@ -222,7 +225,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
                     if (sessionError || !session || !session.provider_token) return alert("⚠️ Session expired. Please Connect X again.");
 
-                    // Aquí llamamos al modal bonito en lugar del feo confirm()
                     showVerifyModal(async () => {
                         const originalText = this.innerHTML;
                         this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
@@ -251,7 +253,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 btn.addEventListener('click', function() {
                     const code = this.getAttribute('data-clipboard');
                     navigator.clipboard.writeText(code).then(() => {
-                        const originalHTML = this.innerHTML; this.innerHTML = '<i class="fa-solid fa-check text-[#00ff88]"></i>';
+                        const originalHTML = this.innerHTML; 
+                        this.innerHTML = '<i class="fa-solid fa-check text-[#00c868] dark:text-[#00ff88]"></i>';
                         setTimeout(() => this.innerHTML = originalHTML, 2000);
                     });
                 });
