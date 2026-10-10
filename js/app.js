@@ -96,8 +96,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const loginBtnMobile = document.getElementById('btn-login-x-mobile');
 
         async function signInWithX() {
-            await supabase.auth.signInWithOAuth({ provider: 'x', options: { redirectTo: window.location.origin + '/giveaways.html' } });
-        }
+    await supabase.auth.signInWithOAuth({ 
+        provider: 'x', 
+        options: { 
+            // Ponemos tu dominio directamente
+            redirectTo: 'https://zazkee.xyz/giveaways' 
+        } 
+    });
+}
 
         function updateLoginUI(session) {
             const username = session ? (session.user.user_metadata.user_name || session.user.user_metadata.preferred_username) : null;
