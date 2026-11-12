@@ -27,30 +27,44 @@
             }
         }
     </script>
-    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="css/globals.css">
     <style>
     @keyframes scroll-marquee {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); } 
+        0% { transform: translate3d(0, 0, 0); }
+        100% { transform: translate3d(-50%, 0, 0); } 
     }
     .animate-marquee {
         display: flex;
         width: max-content;
-        animation: scroll-marquee 30s linear infinite;
+        animation: scroll-marquee 32s linear infinite;
+        will-change: transform;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        perspective: 1000px;
+        transform-style: preserve-3d;
     }
     .animate-marquee:hover {
         animation-play-state: paused; 
     }
-</style>
+    .marquee-item {
+        transform: translateZ(0);
+        backface-visibility: hidden;
+    }
+    /* Asegura que las secciones sean visibles sin bloquear el cambio de tema */
+    .reveal, .hero-element {
+        opacity: 1;
+        visibility: visible;
+    }
+    </style>
 </head>
 <body class="antialiased selection:bg-brandGold selection:text-black bg-gray-50 dark:bg-[#050505] transition-colors duration-500 overflow-x-hidden">
     
     <audio id="introSound" src="sound.mp3" preload="auto"></audio>
 
-    <!-- FONDO DE VIDEO OPTIMIZADO PARA MÓVIL (Con Poster y src directo para evitar parpadeos) -->
+    <!-- FONDO DE VIDEO OPTIMIZADO PARA MÓVIL -->
     <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
-        <video id="bg-video" src="videoNo.mp4" poster="poster-noche.jpg" class="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover opacity-90 transition-opacity duration-1000" autoplay loop muted playsinline preload="auto"></video>
-        <div id="video-overlay" class="absolute inset-0 bg-black/50 dark:bg-black/60 transition-colors duration-500"></div>
+        <video id="bg-video" src="videoNo.mp4" poster="poster-noche.png" class="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover opacity-90 transition-opacity duration-1000" autoplay loop muted playsinline preload="auto"></video>
+        <div id="video-overlay" class="absolute inset-0 bg-white/30 dark:bg-black/60 transition-colors duration-500"></div>
     </div>
 
     <!-- PRELOADER -->
@@ -208,7 +222,7 @@
         <div class="max-w-[1400px] mx-auto px-6 py-10">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 text-center">
                 <div>
-                    <h3 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">14.4K+</h3>
+                    <h3 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">15.8K+</h3>
                     <p class="text-xs md:text-sm text-gray-500 uppercase tracking-widest">X Followers</p>
                 </div>
                 <div>
@@ -220,7 +234,7 @@
                     <p class="text-xs md:text-sm text-gray-500 uppercase tracking-widest">Mini KOLs</p>
                 </div>
                 <div>
-                    <h3 class="text-3xl md:text-4xl font-bold text-brandGold mb-2">100+</h3>
+                    <h3 class="text-3xl md:text-4xl font-bold text-brandGold mb-2">120+</h3>
                     <p class="text-xs md:text-sm text-gray-500 uppercase tracking-widest">Giveaways</p>
                 </div>
             </div>
@@ -261,7 +275,7 @@
         </div>
     </section>
 
-<!-- Partnerships Section -->
+    <!-- Partnerships Section -->
     <section id="partnerships" class="py-24 md:py-32 relative bg-white/40 dark:bg-darker/60 backdrop-blur-md scroll-mt-20 z-10 transition-colors">
         <div class="max-w-[1400px] mx-auto px-6">
             <div class="text-center mb-16 reveal">
@@ -271,6 +285,13 @@
 
             <!-- Active Partnerships Grid (4 columnas) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                
+                 <!-- NUEVO PARTNER: DOPE -->
+                <div class="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/5 rounded-2xl p-8 group flex flex-col items-center text-center reveal delay-400 transition-colors">
+                    <img src="DOPE.jpg" alt="DOPE" class="w-24 h-24 rounded-full mb-6 object-cover border-2 border-gray-200 dark:border-white/10 group-hover:border-brandGold transition-colors shadow-lg">
+                    <h4 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-brandGold transition-colors">DOPE</h4>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-grow">Instant crypto casino with huge bankroll & VIP rewards</p>
+                </div>
                 
                 <div class="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/5 rounded-2xl p-8 group flex flex-col items-center text-center reveal delay-100 transition-colors">
                     <img src="goodpack.jpg" alt="Godpack.io" class="w-24 h-24 rounded-full mb-6 object-cover border-2 border-gray-200 dark:border-white/10 group-hover:border-brandGold transition-colors shadow-lg">
@@ -289,16 +310,10 @@
                     <h4 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-brandGold transition-colors">Flipcash</h4>
                     <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-grow">Solana digital cash & community tipping app.</p>
                 </div>
-
-                <div class="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/5 rounded-2xl p-8 group flex flex-col items-center text-center reveal delay-400 transition-colors">
-                    <img src="REAP.jpg" alt="Reap" class="w-24 h-24 rounded-full mb-6 object-cover border-2 border-gray-200 dark:border-white/10 group-hover:border-brandGold transition-colors shadow-lg">
-                    <h4 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-brandGold transition-colors">Reap</h4>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-grow">Play free games, earn daily SOL rewards.</p>
-                </div>
                 
             </div>
 
-            <!-- PAST COLLABORATIONS TICKER -->
+            <!-- PAST COLLABORATIONS TICKER (Con aceleración GPU y REAP añadido) -->
             <div class="mt-20 pt-10 border-t border-gray-200 dark:border-white/5 relative overflow-hidden">
                 <div class="text-center mb-8">
                     <p class="text-xs font-bold text-gray-500 uppercase tracking-widest"><i class="fa-solid fa-clock-rotate-left mr-2"></i>Past Partnerships</p>
@@ -312,83 +327,115 @@
                     <!-- El contenedor animado -->
                     <div class="animate-marquee flex items-center gap-12 md:gap-24 pl-12 md:pl-24">
                         
-                        <!-- ====== MITAD 1 (Multiplicamos los partners para llenar el ancho de la pantalla) ====== -->
-                        <div class="flex items-center gap-12 md:gap-24">
+                        <!-- ====== MITAD 1 ====== -->
+                        <div class="flex items-center gap-12 md:gap-24 shrink-0">
                             <!-- Set 1 -->
-                            <div class="flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
-                                <img src="parimatch.jpg" alt="Parimatch" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="parimatch.jpg" alt="Parimatch" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
                                 <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">Parimatch</span>
                             </div>
-                            <div class="flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
-                                <img src="fortunejackpot.jpg" alt="FortuneJack" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="fortunejackpot.jpg" alt="FortuneJack" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
                                 <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">FortuneJack</span>
+                            </div>
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="REAP.jpg" alt="Reap" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                                <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">Reap</span>
                             </div>
                             <!-- Set 2 -->
-                            <div class="flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
-                                <img src="parimatch.jpg" alt="Parimatch" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="parimatch.jpg" alt="Parimatch" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
                                 <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">Parimatch</span>
                             </div>
-                            <div class="flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
-                                <img src="fortunejackpot.jpg" alt="FortuneJack" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="fortunejackpot.jpg" alt="FortuneJack" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
                                 <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">FortuneJack</span>
+                            </div>
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="REAP.jpg" alt="Reap" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                                <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">Reap</span>
                             </div>
                             <!-- Set 3 -->
-                            <div class="flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
-                                <img src="parimatch.jpg" alt="Parimatch" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="parimatch.jpg" alt="Parimatch" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
                                 <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">Parimatch</span>
                             </div>
-                            <div class="flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
-                                <img src="fortunejackpot.jpg" alt="FortuneJack" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="fortunejackpot.jpg" alt="FortuneJack" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
                                 <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">FortuneJack</span>
+                            </div>
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="REAP.jpg" alt="Reap" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                                <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">Reap</span>
                             </div>
                             <!-- Set 4 -->
-                            <div class="flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
-                                <img src="parimatch.jpg" alt="Parimatch" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="parimatch.jpg" alt="Parimatch" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
                                 <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">Parimatch</span>
                             </div>
-                            <div class="flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
-                                <img src="fortunejackpot.jpg" alt="FortuneJack" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="fortunejackpot.jpg" alt="FortuneJack" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
                                 <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">FortuneJack</span>
+                            </div>
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="REAP.jpg" alt="Reap" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                                <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">Reap</span>
                             </div>
                         </div>
 
-                        <!-- ====== MITAD 2 (Copia idéntica para el loop) ====== -->
-                        <div class="flex items-center gap-12 md:gap-24" aria-hidden="true">
+                        <!-- ====== MITAD 2 (Copia idéntica para el loop infinito perfecto) ====== -->
+                        <div class="flex items-center gap-12 md:gap-24 shrink-0" aria-hidden="true">
                             <!-- Set 1 -->
-                            <div class="flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
-                                <img src="parimatch.jpg" alt="Parimatch" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="parimatch.jpg" alt="Parimatch" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
                                 <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">Parimatch</span>
                             </div>
-                            <div class="flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
-                                <img src="fortunejackpot.jpg" alt="FortuneJack" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="fortunejackpot.jpg" alt="FortuneJack" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
                                 <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">FortuneJack</span>
+                            </div>
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="REAP.jpg" alt="Reap" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                                <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">Reap</span>
                             </div>
                             <!-- Set 2 -->
-                            <div class="flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
-                                <img src="parimatch.jpg" alt="Parimatch" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="parimatch.jpg" alt="Parimatch" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
                                 <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">Parimatch</span>
                             </div>
-                            <div class="flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
-                                <img src="fortunejackpot.jpg" alt="FortuneJack" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="fortunejackpot.jpg" alt="FortuneJack" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
                                 <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">FortuneJack</span>
+                            </div>
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="REAP.jpg" alt="Reap" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                                <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">Reap</span>
                             </div>
                             <!-- Set 3 -->
-                            <div class="flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
-                                <img src="parimatch.jpg" alt="Parimatch" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="parimatch.jpg" alt="Parimatch" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
                                 <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">Parimatch</span>
                             </div>
-                            <div class="flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
-                                <img src="fortunejackpot.jpg" alt="FortuneJack" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="fortunejackpot.jpg" alt="FortuneJack" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
                                 <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">FortuneJack</span>
+                            </div>
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="REAP.jpg" alt="Reap" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                                <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">Reap</span>
                             </div>
                             <!-- Set 4 -->
-                            <div class="flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
-                                <img src="parimatch.jpg" alt="Parimatch" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="parimatch.jpg" alt="Parimatch" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
                                 <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">Parimatch</span>
                             </div>
-                            <div class="flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
-                                <img src="fortunejackpot.jpg" alt="FortuneJack" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="fortunejackpot.jpg" alt="FortuneJack" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
                                 <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">FortuneJack</span>
+                            </div>
+                            <div class="marquee-item flex items-center gap-3 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                                <img src="REAP.jpg" alt="Reap" decoding="async" class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-white/10">
+                                <span class="text-gray-900 dark:text-white font-bold text-sm tracking-wider">Reap</span>
                             </div>
                         </div>
 
@@ -526,6 +573,32 @@
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="js/app.js"></script>
+    <script src="Js/app.js"></script>
+    <script>
+        // Sincronizador del video de fondo (videoLuz.mp4 / videoNo.mp4) al cambiar de tema
+        document.addEventListener('DOMContentLoaded', () => {
+            const htmlEl = document.documentElement;
+            const bgVideo = document.getElementById('bg-video');
+            
+            const syncVideoWithTheme = () => {
+                if (!bgVideo) return;
+                const isDark = htmlEl.classList.contains('dark');
+                const targetSrc = isDark ? 'videoNo.mp4' : 'videoLuz.mp4';
+                const targetPoster = isDark ? 'poster-noche.png' : 'poster-luz.png';
+                
+                if (!bgVideo.getAttribute('src').includes(targetSrc)) {
+                    bgVideo.setAttribute('poster', targetPoster);
+                    bgVideo.setAttribute('src', targetSrc);
+                    bgVideo.load();
+                    bgVideo.play().catch(() => {});
+                }
+            };
+
+            // Observa cambios en la clase 'dark' de <html> hechos por app.js
+            const observer = new MutationObserver(syncVideoWithTheme);
+            observer.observe(htmlEl, { attributes: true, attributeFilter: ['class'] });
+            syncVideoWithTheme();
+        });
+    </script>
 </body>
-</html> 
+</html>
