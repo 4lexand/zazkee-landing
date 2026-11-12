@@ -18,47 +18,16 @@ document.addEventListener("DOMContentLoaded", () => {
             if(window.innerWidth >= 1024) { gsap.set('#hero-img', { autoAlpha: 1, x: 0 }); } else { gsap.set('#hero-img', { autoAlpha: 1, y: 0 }); }
             gsap.set('.hero-element', { autoAlpha: 1, y: 0 });
         } else {
-            let count = 0; 
-            const fill = document.getElementById('loading-text-fill'); 
-            const counter = document.getElementById('loader-counter');
-            const statusText = document.getElementById('loading-status');
-            
-            // Textos dinámicos que aparecerán mientras carga
-            const loadMessages = [
-                "Loading active drops...",
-                "Verifying partnerships...",
-                "Calculating jackpot...",
-                "Securing connection..."
-            ];
-
+            let count = 0; const fill = document.getElementById('loading-text-fill'); const counter = document.getElementById('loader-counter');
             if(fill) fill.style.transition = 'width 0.1s linear';
-            
             const interval = setInterval(() => {
-                count += Math.floor(Math.random() * 3) + 1; 
-                if (count > 100) count = 100;
-                
-                if(counter) counter.textContent = count; 
-                if(fill) fill.style.width = count + '%';
-                
-                // Cambiar el texto según el progreso
-                if(statusText) {
-                    if(count < 25) statusText.textContent = loadMessages[0];
-                    else if(count < 50) statusText.textContent = loadMessages[1];
-                    else if(count < 80) statusText.textContent = loadMessages[2];
-                    else statusText.textContent = loadMessages[3];
-                }
-
+                count += Math.floor(Math.random() * 3) + 1; if (count > 100) count = 100;
+                if(counter) counter.textContent = count; if(fill) fill.style.width = count + '%';
                 if (count === 100) {
                     clearInterval(interval);
-                    if(statusText) statusText.textContent = "System Ready";
-                    if(enterBtn) { 
-                        enterBtn.classList.remove('pointer-events-none'); 
-                        enterBtn.style.opacity = '1'; 
-                        enterBtn.style.visibility = 'visible'; 
-                    }
+                    if(enterBtn) { enterBtn.classList.remove('pointer-events-none'); enterBtn.style.opacity = '1'; enterBtn.style.visibility = 'visible'; }
                 }
             }, 30);
-
             if(enterBtn) {
                 enterBtn.addEventListener('click', () => {
                     sessionStorage.setItem('zazkee_visited', 'true');
@@ -74,9 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
         }
-    } else { 
-        document.body.style.opacity = '1'; 
-    }
+    } else { document.body.style.opacity = '1'; }
 
     const menuBtn = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
@@ -129,14 +96,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const loginBtnMobile = document.getElementById('btn-login-x-mobile');
 
         async function signInWithX() {
-    await supabase.auth.signInWithOAuth({ 
-        provider: 'x', 
-        options: { 
-            // Ponemos tu dominio directamente
-            redirectTo: 'https://zazkee.xyz/giveaways' 
-        } 
-    });
-}
+            await supabase.auth.signInWithOAuth({ provider: 'x', options: { redirectTo: window.location.origin + '/giveaways.html' } });
+        }
 
         function updateLoginUI(session) {
             const username = session ? (session.user.user_metadata.user_name || session.user.user_metadata.preferred_username) : null;
